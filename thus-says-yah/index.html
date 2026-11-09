@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230d0d0f'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='%23d4af37' font-family='Georgia,serif'%3EY%3C/text%3E%3C/svg%3E">
+<title>Thus Says Yah — Daily Heart &amp; Mind Check-In</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --panel:#17171b; --panel2:#1f1f24; --line:#2c2c33;
+    --gold:#d4af37; --gold-dim:#9a7d24; --red:#c8102e; --red-dark:#7a0c1d;
+    --text:#f5efe0; --muted:#b8b0a0; --soft:#8d8577;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  body{padding-bottom:86px;}
+  a{color:var(--gold);}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif; color:var(--gold); margin:0 0 8px;}
+  h1{font-size:26px; letter-spacing:.5px;}
+  h2{font-size:21px;}
+  h3{font-size:17px;}
+  p{line-height:1.6; margin:0 0 12px;}
+  .muted{color:var(--muted);} .small{font-size:13px; line-height:1.5;}
+  .screen{display:none; max-width:640px; margin:0 auto; padding:20px 18px 8px;}
+  .screen.active{display:block;}
+  .hero{background:linear-gradient(160deg,#1a0508,#17171b 55%,#241a05);
+    border:1px solid var(--line); border-radius:16px; padding:22px 18px; margin-bottom:16px;}
+  .hero .kicker{color:var(--gold); letter-spacing:3px; font-size:11px; text-transform:uppercase; margin-bottom:6px;}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px;}
+  .card.gold-border{border-color:var(--gold-dim);}
+  .verse{display:block; background:var(--panel2); border-left:3px solid var(--gold);
+    padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:15px; line-height:1.6;}
+  .verse b{color:var(--gold);}
+  .btn{display:block; width:100%; text-align:center; background:var(--red); color:#fff;
+    border:none; border-radius:12px; padding:15px 18px; font-size:17px; font-weight:700;
+    cursor:pointer; margin:10px 0;}
+  .btn.gold{background:var(--gold); color:#171207;}
+  .btn.ghost{background:transparent; border:1px solid var(--gold-dim); color:var(--gold);}
+  .btn:disabled{opacity:.5;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px;}
+  .chip{border:1px solid var(--line); background:var(--panel2); color:var(--text);
+    border-radius:999px; padding:10px 14px; font-size:15px; cursor:pointer;}
+  .chip.sel{background:var(--gold); color:#171207; border-color:var(--gold); font-weight:700;}
+  textarea,input[type=text],input[type=time]{width:100%; background:var(--panel2); color:var(--text);
+    border:1px solid var(--line); border-radius:10px; padding:12px; font-size:16px; font-family:inherit;}
+  textarea{min-height:90px; resize:vertical;}
+  label{display:block; font-size:14px; color:var(--muted); margin:14px 0 6px;}
+  .topic-img{width:100%; border-radius:12px; display:block; margin:12px 0 4px; border:1px solid var(--line);}
+  video.topic-vid{width:100%; border-radius:12px; display:block; margin:12px 0 4px; border:1px solid var(--line); background:#000;}
+  .vid-note{font-size:13px; color:var(--soft); text-align:center; margin:6px 0 2px;}
+  .streak-row{display:flex; gap:10px; margin-bottom:16px;}
+  .stat{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:12px; text-align:center;}
+  .stat .num{font-size:24px; font-weight:800; color:var(--gold); font-family:Georgia,serif;}
+  .stat .lbl{font-size:12px; color:var(--muted); margin-top:2px;}
+  .topic-row{display:flex; align-items:center; gap:12px; background:var(--panel);
+    border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; cursor:pointer;}
+  .topic-row img{width:64px; height:64px; object-fit:cover; border-radius:8px; flex-shrink:0;}
+  .topic-row .t{font-weight:700; font-size:16px;}
+  .topic-row .s{font-size:13px; color:var(--muted);}
+  .topic-row .arrow{margin-left:auto; color:var(--gold); font-size:20px;}
+  nav{position:fixed; left:0; right:0; bottom:0; background:#101013; border-top:1px solid var(--line);
+    display:flex; z-index:50; padding-bottom:env(safe-area-inset-bottom);}
+  nav button{flex:1; background:none; border:none; color:var(--muted); padding:12px 4px 10px;
+    font-size:11px; cursor:pointer;}
+  nav button .ico{display:block; font-size:20px; line-height:1.1;}
+  nav button.on{color:var(--gold); font-weight:700;}
+  .pill{display:inline-block; background:var(--red-dark); color:#fff; border-radius:999px;
+    padding:3px 10px; font-size:12px; letter-spacing:1px; text-transform:uppercase;}
+  .counsel-head{text-align:center; padding:8px 0 4px;}
+  .counsel-head .thus{font-family:Georgia,serif; font-size:24px; color:var(--gold); letter-spacing:1px;}
+  .said{font-style:italic; color:var(--muted); margin:8px 0; font-size:14px;}
+  .hist-row{font-size:14px; padding:10px 0; border-bottom:1px solid var(--line); line-height:1.5;}
+  .hist-row:last-child{border-bottom:none;}
+  .hist-row .d{color:var(--gold); font-weight:700;}
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 0;}
+  .switch{position:relative; width:52px; height:30px; flex-shrink:0;}
+  .switch input{opacity:0; width:0; height:0;}
+  .slider{position:absolute; inset:0; background:#333; border-radius:999px; cursor:pointer; transition:.2s;}
+  .slider:before{content:""; position:absolute; width:24px; height:24px; left:3px; top:3px;
+    background:#fff; border-radius:50%; transition:.2s;}
+  .switch input:checked + .slider{background:var(--gold);}
+  .switch input:checked + .slider:before{transform:translateX(22px);}
+  .banner{background:#241a05; border:1px solid var(--gold-dim); color:var(--text);
+    border-radius:10px; padding:12px; margin-bottom:14px; font-size:14px; line-height:1.5;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<!-- ============ HOME ============ -->
+<section class="screen active" id="screen-home">
+  <div class="hero">
+    <div class="kicker">Thus Says Yah</div>
+    <h1>Examine your heart.<br>Guard your mind.</h1>
+    <p class="muted">A daily check-in before Yah — where is your heart, what is on your mind, and what does His Word say back.</p>
+  </div>
+  <div id="reminder-banner" class="banner hidden"></div>
+  <div class="streak-row">
+    <div class="stat"><div class="num" id="streak-num">0</div><div class="lbl">day streak</div></div>
+    <div class="stat"><div class="num" id="checkins-num">0</div><div class="lbl">check-ins</div></div>
+    <div class="stat"><div class="num" id="today-state">—</div><div class="lbl">today</div></div>
+  </div>
+  <div class="card gold-border">
+    <h2>Today's Word</h2>
+    <span class="verse" id="daily-verse"></span>
+  </div>
+  <div class="card">
+    <h2>Examine Yourself</h2>
+    <p id="exam-question" style="font-size:17px;"></p>
+    <p class="small muted">Sit with it a moment before you answer. Truth first — Yah already knows; the check-in is for you.</p>
+  </div>
+  <button class="btn" id="btn-checkin">Check in today</button>
+  <button class="btn ghost" id="btn-ask-home">Ask anything</button>
+  <div class="card">
+    <h2>Recent Check-Ins</h2>
+    <div id="history-list"><p class="muted small">No check-ins yet. Your first one starts your streak.</p></div>
+  </div>
+</section>
+
+<!-- ============ CHECK-IN ============ -->
+<section class="screen" id="screen-checkin">
+  <div class="hero">
+    <div class="kicker">Daily Check-In</div>
+    <h1>Where is your heart today?</h1>
+    <p class="muted">Answer truthfully. No one sees this but you — it never leaves your phone.</p>
+  </div>
+  <div class="card">
+    <label style="margin-top:0;">Tap what fits — pick one</label>
+    <div class="chips" id="feeling-chips"></div>
+    <label for="mind-text">What is on your mind?</label>
+    <textarea id="mind-text" placeholder="Say it plain — worry, a thought, a situation, a name…"></textarea>
+    <button class="btn gold" id="btn-hear">Hear what Yah says</button>
+    <p class="small muted" style="text-align:center;">Your words stay on this phone. Nothing is sent anywhere.</p>
+  </div>
+</section>
+
+<!-- ============ COUNSEL ============ -->
+<section class="screen" id="screen-counsel">
+  <div class="counsel-head">
+    <span class="pill">Counsel</span>
+    <div class="thus">Thus Says Yah</div>
+    <div class="small muted" id="counsel-topic-label"></div>
+  </div>
+  <div id="counsel-body"></div>
+  <button class="btn" id="btn-counsel-done">Amen — back to Home</button>
+  <button class="btn ghost" id="btn-counsel-ask">Ask something else</button>
+</section>
+
+<!-- ============ ASK ============ -->
+<section class="screen" id="screen-ask">
+  <div class="hero">
+    <div class="kicker">Ask Anything</div>
+    <h1>What is weighing on you?</h1>
+    <p class="muted">Ask it plain. The app searches the counsel topics and answers from Scripture.</p>
+  </div>
+  <div class="card">
+    <label for="ask-text" style="margin-top:0;">Your question</label>
+    <input type="text" id="ask-text" placeholder="e.g. I can't sleep, I'm worried about money…">
+    <button class="btn gold" id="btn-ask-go">Hear what Yah says</button>
+  </div>
+  <div class="card">
+    <h2>Try one of these</h2>
+    <div class="chips" id="ask-examples"></div>
+  </div>
+</section>
+
+<!-- ============ TOPICS ============ -->
+<section class="screen" id="screen-topics">
+  <div class="hero">
+    <div class="kicker">Counsel Topics</div>
+    <h1>Twelve places the heart goes</h1>
+    <p class="muted">Every topic holds Scripture in the Yah wording, counsel, a picture — and video where it is ready.</p>
+  </div>
+  <div id="topics-list"></div>
+</section>
+
+<!-- ============ SETTINGS ============ -->
+<section class="screen" id="screen-settings">
+  <div class="hero">
+    <div class="kicker">Settings</div>
+    <h1>Daily Reminder</h1>
+    <p class="muted">Yah's Word every morning — a nudge to check in before the day takes you.</p>
+  </div>
+  <div class="card">
+    <div class="toggle-row">
+      <div><strong>Daily reminder</strong><br><span class="small muted">A prompt to check in each morning.</span></div>
+      <label class="switch"><input type="checkbox" id="reminder-on"><span class="slider"></span></label>
+    </div>
+    <label for="reminder-time">Reminder time</label>
+    <input type="time" id="reminder-time" value="08:00">
+    <p class="small muted" style="margin-top:12px;"><strong>Plain truth about reminders:</strong> this is a web app, and on iPhone a web app cannot push reminders reliably the way a store app can. What works: add this app to your Home Screen, open it each morning, and today's check-in will be waiting for you. If your browser allows notifications, this app will also try to send one at your chosen time while the app is open or recently used — but the Home Screen habit is the reliable path. Nothing here costs anything and nothing leaves your phone.</p>
+    <button class="btn gold" id="btn-save-settings">Save reminder</button>
+    <p class="small" id="settings-saved" style="color:var(--gold); text-align:center;"></p>
+  </div>
+  <div class="card">
+    <h2>Your Data</h2>
+    <p class="small muted">Check-ins, streak, and settings live only in this phone's storage. Nothing is uploaded, nothing is shared, no account, no cost.</p>
+    <button class="btn ghost" id="btn-clear-data">Clear my check-in history</button>
+  </div>
+  <div class="card">
+    <h2>About</h2>
+    <p class="small muted">Thus Says Yah — a daily heart-and-mind check-in. Scripture quoted from Yah Scriptures (yahscriptures.online), used with permission. Given freely, never sold — freely we have received, freely we give (Matthew 10:8).</p>
+  </div>
+</section>
+
+<nav>
+  <button data-screen="home" class="on"><span class="ico">🏠</span>Home</button>
+  <button data-screen="checkin"><span class="ico">💛</span>Check-In</button>
+  <button data-screen="ask"><span class="ico">🙏</span>Ask</button>
+  <button data-screen="topics"><span class="ico">📖</span>Topics</button>
+  <button data-screen="settings"><span class="ico">⏰</span>Settings</button>
+</nav>
+
+<script>
+window.TSY_BANK = {"topics": [{"id": "heavy-heart", "title": "Heavy Heart", "slug": "heavy-heart", "verses": [{"ref": "Psalm 34:18", "text": "ק,𐤒 𐤉𐤄𐤅𐤄 is near to the broken-hearted,\nAnd saves those whose spirit is crushed."}, {"ref": "Psalm 147:3", "text": "Heals the broken-hearted And binds up their wounds."}, {"ref": "Psalm 51:17", "text": "The slaughterings of Elohim are a broken spirit, \nA heart broken and crushed, O Elohim, \nThese You do not despise."}], "counsel": "Thus says Yah: He is near to the broken-hearted, and He saves those whose spirit is crushed. Your heaviness is not hidden from Him, and a broken spirit is not something He despises — it is something He heals. Do not carry this alone and do not pretend the weight is not there. Bring the heaviness to Him plainly, in prayer, and let His Word do the binding up. The wound will not heal by ignoring it; it heals by bringing it to the One who binds up wounds.", "keywords": ["heavy", "sad", "grief", "heartbroken", "broken", "crushed", "sorrow", "depressed", "down", "hurting"], "image": "images/heavy-heart.jpg", "video": "videos/heavy-heart.mp4"}, {"id": "anxiety-worry", "title": "Anxiety & Worry", "slug": "anxiety-worry", "verses": [{"ref": "Philippians 4:6", "text": "Worry for naught, but in all, by prayer and petition, with thanksgiving, let your requests be made known to Elohim."}, {"ref": "Philippians 4:7", "text": "And the peace of Elohim, which surpasses all understanding, shall guard your hearts and minds through Mashiaḥ 𐤉𐤄𐤅𐤔𐤏."}, {"ref": "1 Peter 5:7", "text": "casting all your worry upon Him, for He is concerned about you."}, {"ref": "Isaiah 41:10", "text": "‘Do not fear, for I am with you. Do not look around, for I am your Elohim. I shall strengthen you, I shall also help you, I shall also uphold you with the right hand of My righteousness.’"}], "counsel": "Thus says Yah: worry for naught, but let your requests be made known to Elohim by prayer and petition, with thanksgiving. Worry is what happens when the mind tries to carry tomorrow by itself, and Yah never asked you to carry it. Cast all your worry upon Him, for He is concerned about you — that is not a suggestion, that is the command. Pray it out, name what you fear, and let His peace guard your heart and mind. He is with you, He will strengthen you, and He will uphold you.", "keywords": ["anxious", "anxiety", "worry", "worried", "fear", "afraid", "panic", "stress", "nervous", "overwhelmed"], "image": "images/anxiety-worry.jpg", "video": "videos/anxiety-worry.mp4"}, {"id": "temptation", "title": "Temptation", "slug": "temptation", "verses": [{"ref": "1 Corinthians 10:13", "text": "No trial has overtaken you except such as is common to man, and Elohim is trustworthy, who shall not allow you to be tried beyond what you are able, but with the trial shall also make the way of escape, enabling you to bear it."}, {"ref": "James 1:12", "text": "Ashrĕ is the man who endures trial, for when he has been proved, he shall receive the crown of ḥai which the Aḏon has promised to those who love Him."}, {"ref": "Hebrews 4:16", "text": "Therefore, let us come boldly to the throne of favor, in order to receive compassion, and find favor for timely help."}], "counsel": "Thus says Yah: no trial has overtaken you except such as is common to man, and Elohim is trustworthy — He will not allow you to be tried beyond what you are able, and with the trial He makes the way of escape. Temptation is not proof that you are finished; enduring it is how the crown is won. Do not stand there arguing with the temptation — take the way of escape He already made, and come boldly to the throne of favor for timely help. Flee what pulls you, pray before you are in it, and do not walk back into the same snare.", "keywords": ["temptation", "tempted", "lust", "craving", "urge", "sin", "falling", "weak", "struggling", "battle"], "image": "images/temptation.jpg", "video": "videos/temptation.mp4"}, {"id": "anger", "title": "Anger", "slug": "anger", "verses": [{"ref": "Proverbs 15:1", "text": "A soft answer turns away wrath, \nBut a harsh word stirs up displeasure."}, {"ref": "Proverbs 16:32", "text": "He who is patient is better than the mighty, \nAnd he who rules over his spirit, than he who takes a city."}, {"ref": "James 1:19", "text": "So then, my beloved brothers, let every man be swift to hear, slow to speak, slow to wrath,"}, {"ref": "James 1:20", "text": "for the wrath of man does not work righteousness of Elohim."}], "counsel": "Thus says Yah: a soft answer turns away wrath, but a harsh word stirs up displeasure. Anger itself will come — the question is whether you rule over your spirit or let it rule you. Be swift to hear, slow to speak, and slow to wrath, because the wrath of man does not work the righteousness of Elohim. Do not let the sun go down on it, and do not let a hot word out of your mouth do damage you cannot take back. Step away, breathe, pray, and answer only when your spirit is ruled.", "keywords": ["angry", "anger", "mad", "furious", "rage", "irritated", "frustrated", "annoyed", "bitter", "offended"], "image": "images/anger.jpg", "video": "videos/anger.mp4"}, {"id": "weariness", "title": "Weariness", "slug": "weariness", "verses": [{"ref": "Isaiah 40:31", "text": "but those who wait on 𐤉𐤄𐤅𐤄 renew their strength, they raise up the wing like eagles, they run and are not weary, they walk and do not faint."}, {"ref": "Matthew 11:28", "text": "“Come to Me, all you who labor and are burdened, and I shall give you rest."}, {"ref": "Galatians 6:9", "text": "And let us not lose heart in doing good, for in due season we shall reap if we do not grow weary."}], "counsel": "Thus says Yah: those who wait on Him renew their strength — they run and are not weary, they walk and do not faint. If you are worn out, stop trying to push through on your own strength; that is the very strength that is failing you. Come to Yahusha, all you who labor and are burdened, and He will give you rest. Rest is not quitting, and waiting on Yah is not doing nothing — it is where the strength comes from. Do not lose heart in doing good; in due season you shall reap if you do not grow weary.", "keywords": ["tired", "weary", "exhausted", "drained", "burnout", "weak", "no energy", "overworked", "worn out"], "image": "images/weariness.jpg", "video": "videos/weariness.mp4"}, {"id": "doubt", "title": "Doubt", "slug": "doubt", "verses": [{"ref": "James 1:5", "text": "If any of you lacks wisdom, let him ask of Elohim, who gives to all generously and without reproach, and it shall be given to him."}, {"ref": "James 1:6", "text": "But he should ask in belief, not doubting, for he who doubts is like a wave of the sea driven and tossed by the wind."}, {"ref": "Hebrews 11:6", "text": "But without belief it is impossible to please Him, for he who comes to Elohim has to believe that He is, and that He is a rewarder of those who earnestly seek Him."}, {"ref": "Mark 9:24", "text": "And immediately the father of the child cried out and said with tears, “I believe Aḏonai, help my unbelief!”"}], "counsel": "Thus says Yah: if any of you lacks wisdom, let him ask of Elohim, who gives to all generously and without reproach. Doubt is not the end of belief — it is the place where you ask, and asking in belief is how you get the answer. Without belief it is impossible to please Him, for he who comes to Elohim has to believe that He is, and that He is a rewarder of those who earnestly seek Him. So pray the father's prayer with him: I believe — help my unbelief. Bring the doubt to Yah honestly instead of hiding it, and let the Scriptures answer it precept upon precept.", "keywords": ["doubt", "doubting", "unsure", "uncertain", "confused", "questioning", "faith", "believe", "wavering"], "image": "images/doubt.jpg", "video": "videos/doubt.mp4"}, {"id": "loneliness", "title": "Loneliness", "slug": "loneliness", "verses": [{"ref": "Psalm 139:10", "text": "There too, Your hand would lead me, \nAnd Your right hand hold me."}, {"ref": "Deuteronomy 31:6", "text": "“Be strong and courageous, do not fear nor be afraid of them. For it is 𐤉𐤄𐤅𐤄 your Elohim who is going with you. He does not fail you nor forsake you.”"}, {"ref": "Hebrews 13:5", "text": "In manner, be without covetousness, and be satisfied with what you have. For He Himself has said, “I shall never leave you nor forsake you,”"}, {"ref": "Psalm 68:6", "text": "Elohim makes a home for lonely; He brings out into prosperity Those who are bound with chains; Only the rebellious shall dwell in a dry land."}], "counsel": "Thus says Yah: there is nowhere you can go from His presence — even in the uttermost parts of the sea, His hand leads you and His right hand holds you. You may feel alone, but feeling alone and being alone are not the same thing. He does not fail you nor forsake you, and He has said, I shall never leave you nor forsake you. Elohim makes a home for the lonely. Be strong and courageous, and do not let the feeling write the truth — the truth is that He is with you, and His people are your family.", "keywords": ["lonely", "loneliness", "alone", "isolated", "abandoned", "forgotten", "unseen", "left out", "no one", "empty"], "image": "images/loneliness.jpg", "video": null}, {"id": "gratitude", "title": "Gratitude", "slug": "gratitude", "verses": [{"ref": "Psalm 103:1", "text": "Of Dawiḏ. Baraḵ 𐤉𐤄𐤅𐤄, O my being, \nAnd all that is within me, \nHis qodesh Name!"}, {"ref": "Psalm 103:2", "text": "Baraḵ 𐤉𐤄𐤅𐤄, O my being, \nAnd do not forget all His dealings,"}, {"ref": "1 Thessalonians 5:18", "text": "in all give thanks, for this is the desire of Elohim in Mashiaḥ 𐤉𐤄𐤅𐤔𐤏 for you."}, {"ref": "Psalm 100:4", "text": "Enter into His gates with thanksgiving, \nAnd into His courts with praise. \nGive thanks to Him; baraḵ His Name."}], "counsel": "Thus says Yah: baraḵ Yahuah, O my being, and do not forget all His dealings. Gratitude is not pretending everything is perfect — it is remembering what He has already done while you are still waiting on what is next. In all things give thanks, for this is the desire of Elohim in Mashiaḥ Yahusha for you. Count it out loud: the breath, the waking, the provision, the mercy that kept you. Enter His gates with thanksgiving, and a thankful heart will see what a complaining heart keeps missing.", "keywords": ["grateful", "gratitude", "thankful", "thanks", "blessed", "appreciation", "praise", "joyful", "content"], "image": "images/gratitude.jpg", "video": null}, {"id": "money-pressure", "title": "Money Pressure", "slug": "money-pressure", "verses": [{"ref": "Matthew 6:33", "text": "“But seek first the Malḵuth of Elohim, and His righteousness, and all these shall be added to you."}, {"ref": "Philippians 4:19", "text": "And my Elohim shall fill all your need according to His riches in esteem by Mashiaḥ 𐤉𐤄𐤅𐤔𐤏."}, {"ref": "Psalm 37:25", "text": "נ,𐤍 I have been young, and now I am old; \nYet I have not seen the righteous forsaken, \nOr his seed begging bread."}], "counsel": "Thus says Yah: seek first the Malḵuth of Elohim and His righteousness, and all these shall be added to you. The pressure is real — the bills, the rent, the not-enough — and Yah knows you need all these things. But worry about money will not make money, and chasing it first will cost you the very peace you need to think straight. Put His kingdom first, do the work set before you honestly, and trust that your Elohim shall fill all your need according to His riches in esteem. I have been young, and now I am old, yet I have not seen the righteous forsaken, or his seed begging bread.", "keywords": ["money", "bills", "broke", "debt", "rent", "poor", "finances", "financial", "paycheck", "job"], "image": "images/money-pressure.jpg", "video": null}, {"id": "family-strain", "title": "Family Strain", "slug": "family-strain", "verses": [{"ref": "Romans 12:18", "text": "If possible, on your part, be at peace with all men."}, {"ref": "Colossians 3:13", "text": "bearing with one another, and forgiving each other if anyone has a complaint against another, indeed, as Mashiaḥ forgave you so also should you."}, {"ref": "Ephesians 4:32", "text": "And be kind towards one another, tenderhearted, forgiving one another, as Elohim also forgave you in Mashiaḥ."}, {"ref": "1 Peter 4:8", "text": "And above all have fervent love for one another, because love covers a great number of sins."}], "counsel": "Thus says Yah: if possible, on your part, be at peace with all men. Family strain hurts the deepest because family is the closest, and the answer is not winning the argument — it is bearing with one another and forgiving each other, as Mashiaḥ forgave you. Be kind toward one another, tenderhearted, forgiving one another, as Elohim also forgave you in Mashiaḥ. Love covers a great number of sins. Do your part for peace even when they will not do theirs, speak soft instead of harsh, and let Yah handle what you cannot fix in them.", "keywords": ["family", "wife", "husband", "marriage", "children", "parents", "mother", "father", "fight", "arguing"], "image": "images/family-strain.jpg", "video": null}, {"id": "feeling-far-from-yah", "title": "Feeling Far from Yah", "slug": "feeling-far-from-yah", "verses": [{"ref": "James 4:8", "text": "Draw near to Elohim and He shall draw near to you. Cleanse hands, sinners. And cleanse hearts, you double-minded!"}, {"ref": "Jeremiah 29:13", "text": "‘And you shall seek, and shall find Me, when you search for Me with all your heart."}, {"ref": "Isaiah 55:6", "text": "Seek 𐤉𐤄𐤅𐤄 while He is to be found, call on Him while He is near."}, {"ref": "Psalm 145:18", "text": "ק,𐤒 𐤉𐤄𐤅𐤄 is near to all who call upon Him, \nTo all who call upon Him in truth."}], "counsel": "Thus says Yah: draw near to Elohim and He shall draw near to you. Feeling far from Him does not mean He moved — seek Him while He is to be found, call on Him while He is near, and you shall seek and find Him when you search for Him with all your heart. He is near to all who call upon Him, to all who call upon Him in truth. The way back is not complicated: turn back, call on His Name, open the Word, and pray — even a short, honest prayer. Come, and let us turn back to Yahuah, for He has torn but He heals us.", "keywords": ["far", "distant", "cold", "dry", "lost", "backslidden", "away", "separated", "disconnected"], "image": "images/feeling-far-from-yah.jpg", "video": null}, {"id": "sleeplessness", "title": "Sleeplessness", "slug": "sleeplessness", "verses": [{"ref": "Psalm 4:8", "text": "I lie down in peace altogether, and sleep; \nFor You alone, O 𐤉𐤄𐤅𐤄, make me dwell in safety."}, {"ref": "Psalm 127:2", "text": "In vain do you rise up early, \nTo sit up late, to eat the bread of toil; \nSo He gives His beloved sleep."}, {"ref": "Proverbs 3:24", "text": "When you lie down, you need not be afraid. And you shall lie down and your sleep shall be sweet."}, {"ref": "Psalm 3:5", "text": "I, I lay down and slept; \nI awoke, for 𐤉𐤄𐤅𐤄 sustained me."}], "counsel": "Thus says Yah: I lie down in peace altogether, and sleep, for You alone, O Yahuah, make me dwell in safety. The night is when the mind replays everything, but rising early and sitting up late in worry is vain — He gives His beloved sleep. When you lie down, you need not be afraid, and your sleep shall be sweet. Lay the day down before Him, pray it out instead of carrying it to bed, and rest in this: Yahuah sustained you today, and He will sustain you through the night.", "keywords": ["sleep", "sleepless", "insomnia", "awake", "night", "can't sleep", "restless", "up all night", "nightmares"], "image": "images/sleeplessness.jpg", "video": null}], "general_counsel": {"title": "Trust Yah First", "verses": [{"ref": "Proverbs 3:5", "text": "Trust in 𐤉𐤄𐤅𐤄 with all your heart, And lean not on your own understanding;"}, {"ref": "Proverbs 3:6", "text": "Know Him in all your ways, And He makes all your paths straight."}, {"ref": "Isaiah 26:3", "text": "“The one steadfast of mind You guard in perfect peace, for he trusts in You."}], "counsel": "Thus says Yah: trust in Yahuah with all your heart, and lean not on your own understanding; know Him in all your ways, and He makes all your paths straight. Whatever you are carrying today, the first move is the same — trust Him before you figure it out, and let His peace guard the mind that is steadfast on Him. Bring it to Him in prayer, open His Word, and take the next right step He shows you. He has never failed His people, and He will not start with you."}, "examination_questions": ["Is there anything you are holding back from Yah today?", "What has been ruling your thoughts most today — Yah, or your worries?", "Is there anyone you need to forgive, or anyone you need to ask forgiveness from?", "Have you thanked Yah today for what He has already done?", "What is one thing Yah has been telling you that you have been putting off?", "Are your words and your walk lining up today?", "If Yah searched your heart right now, what would He find that needs to change?"]};
+</script>
+<script>
+(function(){
+  "use strict";
+  var BANK = window.TSY_BANK;
+  var LS = { streak:"tsy_streak", last:"tsy_last_checkin", hist:"tsy_history", set:"tsy_settings" };
+  function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function dayOfYear(){ var n=new Date(), s=new Date(n.getFullYear(),0,0); return Math.floor((n-s)/86400000); }
+  function load(k, fb){ try{ var v=localStorage.getItem(k); return v==null?fb:JSON.parse(v); }catch(e){ return fb; } }
+  function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+  /* ---------- navigation ---------- */
+  var navBtns = document.querySelectorAll("nav button");
+  function show(screen){
+    document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+    document.getElementById("screen-"+screen).classList.add("active");
+    navBtns.forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-screen")===screen); });
+    window.scrollTo(0,0);
+    if(screen==="home") renderHome();
+    if(screen==="topics") renderTopics();
+  }
+  navBtns.forEach(function(b){ b.addEventListener("click", function(){ show(b.getAttribute("data-screen")); }); });
+  document.getElementById("btn-checkin").addEventListener("click", function(){ show("checkin"); });
+  document.getElementById("btn-ask-home").addEventListener("click", function(){ show("ask"); });
+  document.getElementById("btn-counsel-done").addEventListener("click", function(){ show("home"); });
+  document.getElementById("btn-counsel-ask").addEventListener("click", function(){ show("ask"); });
+
+  /* ---------- home ---------- */
+  function allVerses(){
+    var out=[];
+    BANK.topics.forEach(function(t){ t.verses.forEach(function(v){ out.push({ref:v.ref, text:v.text, topic:t.title}); }); });
+    BANK.general_counsel.verses.forEach(function(v){ out.push({ref:v.ref, text:v.text, topic:"Trust Yah First"}); });
+    return out;
+  }
+  function renderHome(){
+    var verses = allVerses();
+    var v = verses[dayOfYear() % verses.length];
+    document.getElementById("daily-verse").innerHTML = "<b>"+esc(v.ref)+"</b> — "+esc(v.text)+"<br><span class='small muted'>"+esc(v.topic)+"</span>";
+    var qs = BANK.examination_questions;
+    document.getElementById("exam-question").textContent = qs[dayOfYear() % qs.length];
+    var streak = load(LS.streak, 0), hist = load(LS.hist, []);
+    document.getElementById("streak-num").textContent = streak;
+    document.getElementById("checkins-num").textContent = hist.length;
+    var last = load(LS.last, null);
+    document.getElementById("today-state").textContent = (last===todayStr()) ? "done ✓" : "waiting";
+    var list = document.getElementById("history-list");
+    if(!hist.length){ list.innerHTML = "<p class='muted small'>No check-ins yet. Your first one starts your streak.</p>"; }
+    else{
+      list.innerHTML = hist.slice(0,7).map(function(h){
+        return "<div class='hist-row'><span class='d'>"+esc(h.date)+"</span> — "+esc(h.feeling)+" · "+esc(h.topic)+
+          (h.mind ? "<br><span class='muted'>“"+esc(h.mind)+"”</span>" : "")+"</div>";
+      }).join("");
+    }
+    var set = load(LS.set, {on:true, time:"08:00"});
+    var banner = document.getElementById("reminder-banner");
+    if(last!==todayStr()){
+      banner.classList.remove("hidden");
+      banner.innerHTML = "☀️ Good morning — you have not checked in yet today. Your reminder is set for <b>"+esc(set.time)+"</b>. Tap <b>Check in today</b> when you are ready.";
+    } else { banner.classList.add("hidden"); }
+  }
+
+  /* ---------- check-in ---------- */
+  var FEELINGS = [
+    {label:"Heavy", topic:"heavy-heart"},
+    {label:"Anxious", topic:"anxiety-worry"},
+    {label:"Tempted", topic:"temptation"},
+    {label:"Angry", topic:"anger"},
+    {label:"Weary", topic:"weariness"},
+    {label:"Doubting", topic:"doubt"},
+    {label:"Lonely", topic:"loneliness"},
+    {label:"Grateful", topic:"gratitude"},
+    {label:"Hopeful", topic:null},
+    {label:"Far from Yah", topic:"far-from-yah"},
+    {label:"At peace", topic:"gratitude"}
+  ];
+  var selectedFeeling = null;
+  var chipsBox = document.getElementById("feeling-chips");
+  FEELINGS.forEach(function(f){
+    var c = document.createElement("button");
+    c.className = "chip"; c.type = "button"; c.textContent = f.label;
+    c.addEventListener("click", function(){
+      selectedFeeling = f;
+      chipsBox.querySelectorAll(".chip").forEach(function(x){ x.classList.remove("sel"); });
+      c.classList.add("sel");
+    });
+    chipsBox.appendChild(c);
+  });
+  function topicById(id){ return BANK.topics.find(function(t){ return t.id===id; }); }
+  function matchTopic(text){
+    var q = (text||"").toLowerCase();
+    var best = null, bestScore = 0;
+    BANK.topics.forEach(function(t){
+      var score = 0;
+      t.keywords.forEach(function(k){ if(q.indexOf(k.toLowerCase())!==-1) score += k.indexOf(" ")===-1 ? 1 : 2; });
+      if(score>bestScore){ bestScore=score; best=t; }
+    });
+    return bestScore>0 ? best : null;
+  }
+  function recordCheckin(feelingLabel, mind, topic){
+    var hist = load(LS.hist, []);
+    var last = load(LS.last, null);
+    var streak = load(LS.streak, 0);
+    var today = todayStr();
+    if(last!==today){
+      var y = new Date(); y.setDate(y.getDate()-1);
+      var yStr = y.getFullYear()+"-"+String(y.getMonth()+1).padStart(2,"0")+"-"+String(y.getDate()).padStart(2,"0");
+      streak = (last===yStr) ? streak+1 : 1;
+      save(LS.streak, streak); save(LS.last, today);
+    }
+    hist.unshift({date:today, feeling:feelingLabel, mind:(mind||"").slice(0,200), topic:topic.title});
+    save(LS.hist, hist.slice(0,60));
+  }
+  function renderCounsel(topic, contextNote){
+    var body = document.getElementById("counsel-body");
+    document.getElementById("counsel-topic-label").textContent = topic.title;
+    var html = '<div class="card gold-border">';
+    if(contextNote) html += '<p class="said">'+esc(contextNote)+'</p>';
+    html += '<h2 style="text-align:center;">'+esc(topic.title)+'</h2>';
+    topic.verses.forEach(function(v){
+      html += '<span class="verse"><b>'+esc(v.ref)+'</b> — '+esc(v.text)+'</span>';
+    });
+    html += '<p style="margin-top:14px;">'+esc(topic.counsel)+'</p></div>';
+    html += '<div class="card"><img class="topic-img" src="'+esc(topic.image)+'" alt="'+esc(topic.title)+'">';
+    if(topic.video){
+      html += '<video class="topic-vid" src="'+esc(topic.video)+'" controls loop playsinline preload="metadata"></video>';
+    } else {
+      html += '<div class="vid-note">🎬 Video for this topic is coming — the picture holds the Word for now.</div>';
+    }
+    html += '</div>';
+    body.innerHTML = html;
+    show("counsel");
+  }
+  document.getElementById("btn-hear").addEventListener("click", function(){
+    if(!selectedFeeling){ alert("Tap how your heart is today first."); return; }
+    var mind = document.getElementById("mind-text").value.trim();
+    var topic = selectedFeeling.topic ? topicById(selectedFeeling.topic) : null;
+    if(!topic){
+      var m = matchTopic(mind);
+      topic = m || BANK.general_counsel;
+    } else if(mind){
+      var m2 = matchTopic(mind);
+      if(m2 && m2.id!==topic.id){
+        // The words on his mind point somewhere else too — lead with the feeling, note the other.
+        renderCounsel(topic, "You said your heart is "+selectedFeeling.label.toLowerCase()+". Your words also speak to "+m2.title+" — sit with this first, then open that topic when you are ready.");
+        recordCheckin(selectedFeeling.label, mind, topic);
+        return;
+      }
+    }
+    renderCounsel(topic, mind ? "You said: “"+mind+"”" : null);
+    recordCheckin(selectedFeeling.label, mind, topic);
+  });
+
+  /* ---------- ask ---------- */
+  var EXAMPLES = ["I can't sleep", "I'm worried about money", "I feel far from Yah", "I'm angry at my family", "I'm tempted again", "I feel alone"];
+  var exBox = document.getElementById("ask-examples");
+  EXAMPLES.forEach(function(e){
+    var c = document.createElement("button");
+    c.className = "chip"; c.type = "button"; c.textContent = e;
+    c.addEventListener("click", function(){ document.getElementById("ask-text").value = e; doAsk(); });
+    exBox.appendChild(c);
+  });
+  function doAsk(){
+    var q = document.getElementById("ask-text").value.trim();
+    if(!q){ alert("Ask it plain — type your question first."); return; }
+    var topic = matchTopic(q);
+    if(topic){ renderCounsel(topic, "You asked: “"+q+"”"); }
+    else{
+      var g = BANK.general_counsel;
+      renderCounsel({title:g.title, verses:g.verses, counsel:g.counsel, image:BANK.topics[0].image, video:null},
+        "You asked: “"+q+"” — no topic matched those words exactly, so here is the counsel that holds everything: trust Yah first.");
+    }
+  }
+  document.getElementById("btn-ask-go").addEventListener("click", doAsk);
+  document.getElementById("ask-text").addEventListener("keydown", function(e){ if(e.key==="Enter") doAsk(); });
+
+  /* ---------- topics ---------- */
+  function renderTopics(){
+    var list = document.getElementById("topics-list");
+    list.innerHTML = BANK.topics.map(function(t){
+      return '<div class="topic-row" data-id="'+t.id+'"><img src="'+esc(t.image)+'" alt=""><div><div class="t">'+esc(t.title)+'</div><div class="s">'+t.verses.length+' verses · '+(t.video?'🎬 video ready':'🖼 picture')+'</div></div><span class="arrow">›</span></div>';
+    }).join("");
+    list.querySelectorAll(".topic-row").forEach(function(row){
+      row.addEventListener("click", function(){ renderCounsel(topicById(row.getAttribute("data-id")), null); });
+    });
+  }
+
+  /* ---------- settings / reminders ---------- */
+  var set = load(LS.set, {on:true, time:"08:00"});
+  document.getElementById("reminder-on").checked = !!set.on;
+  document.getElementById("reminder-time").value = set.time || "08:00";
+  document.getElementById("btn-save-settings").addEventListener("click", function(){
+    var on = document.getElementById("reminder-on").checked;
+    var time = document.getElementById("reminder-time").value || "08:00";
+    save(LS.set, {on:on, time:time});
+    document.getElementById("settings-saved").textContent = "Saved — reminder " + (on ? "on at "+time : "off") + ".";
+    if(on && "Notification" in window && Notification.permission==="default"){
+      Notification.requestPermission().catch(function(){});
+    }
+  });
+  document.getElementById("btn-clear-data").addEventListener("click", function(){
+    if(!confirm("Clear your check-in history and streak? This cannot be undone.")) return;
+    try{ localStorage.removeItem(LS.hist); localStorage.removeItem(LS.streak); localStorage.removeItem(LS.last); }catch(e){}
+    renderHome();
+    alert("History cleared.");
+  });
+  var notifiedToday = null;
+  function reminderTick(){
+    var s = load(LS.set, {on:true, time:"08:00"});
+    if(!s.on) return;
+    var now = new Date();
+    var hhmm = String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+    if(hhmm===s.time && notifiedToday!==todayStr()){
+      notifiedToday = todayStr();
+      if(load(LS.last, null)!==todayStr()){
+        if("Notification" in window && Notification.permission==="granted"){
+          try{ new Notification("Thus Says Yah", {body:"Time to check in — where is your heart today?"}); }catch(e){}
+        }
+        renderHome();
+      }
+    }
+  }
+  setInterval(reminderTick, 30000);
+  renderHome();
+})();
+</script>
+</body>
+</html>
