@@ -87,6 +87,34 @@
   .switch input:checked + .slider:before{transform:translateX(22px);}
   .banner{background:#241a05; border:1px solid var(--gold-dim); color:var(--text);
     border-radius:10px; padding:12px; margin-bottom:14px; font-size:14px; line-height:1.5;}
+  /* ---------- talk (conversational dialogue) ---------- */
+  .talk-list{display:flex; flex-direction:column; gap:10px; max-height:460px; overflow-y:auto; padding:4px 2px; margin-bottom:12px;}
+  .talk-msg{max-width:88%; padding:10px 12px; border-radius:12px; font-size:15px; line-height:1.6; word-wrap:break-word;}
+  .talk-msg.user{align-self:flex-end; background:var(--red-dark); color:#fff; border-bottom-right-radius:4px;}
+  .talk-msg.assistant{align-self:flex-start; background:var(--panel2); border:1px solid var(--line); border-left:3px solid var(--gold); border-bottom-left-radius:4px;}
+  .talk-msg.thinking{align-self:flex-start; background:var(--panel2); border:1px solid var(--line); color:var(--muted); font-style:italic;}
+  .talk-msg .talk-refs{margin-top:8px; font-size:13px;}
+  .talk-msg .talk-note{margin-top:8px; font-size:13px; color:var(--muted);}
+  .talk-input-row{display:flex; gap:8px; align-items:center;}
+  .talk-input-row input{flex:1;}
+  .talk-input-row .btn{width:auto; margin:0; padding:12px 16px; flex-shrink:0;}
+  .talk-mic{flex-shrink:0; background:var(--gold); color:#171207; border:none; border-radius:10px; padding:12px 14px; font-size:18px; font-weight:700; cursor:pointer;}
+  .talk-mic.listening{background:var(--red); color:#fff; animation:pulse 1.6s ease-in-out infinite;}
+  /* ---------- voice mode (Ask screen) ---------- */
+  .mic-btn{display:block; width:100%; text-align:center; background:var(--gold); color:#171207;
+    border:none; border-radius:12px; padding:15px 18px; font-size:17px; font-weight:700;
+    cursor:pointer; margin:10px 0;}
+  .mic-btn.listening{background:var(--red); color:#fff; animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(200,16,46,.55);}50%{box-shadow:0 0 0 12px rgba(200,16,46,0);}}
+  .mic-btn:disabled{opacity:.5; animation:none;}
+  .voice-heard{background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; margin:10px 0; font-size:15px; line-height:1.5;}
+  .voice-heard .lbl{font-size:12px; color:var(--soft); text-transform:uppercase; letter-spacing:1px;}
+  .voice-answer{background:var(--panel2); border-left:3px solid var(--gold);
+    padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:15px; line-height:1.6;}
+  .voice-answer b{color:var(--gold);}
+  .repeat-banner{background:#241a05; border:1px solid var(--gold-dim); border-radius:10px;
+    padding:12px; margin:10px 0; font-size:14px; line-height:1.5; text-align:center;}
   .hidden{display:none !important;}
 </style>
 </head>
@@ -164,6 +192,18 @@
     <button class="btn gold" id="btn-ask-go">Hear what Yah says</button>
     <p class="small muted" id="ask-status" style="text-align:center; margin-top:8px;"></p>
   </div>
+  <div class="card gold-border" id="voice-card">
+    <h2>🎙️ Voice Mode</h2>
+    <p class="small muted">Tap the microphone and talk — ask for a verse, ask what a verse means, ask what a word means, or ask the app to repeat a verse until you have it in your heart. Your voice never leaves your phone: the app listens on this device only, and it answers in the device's own voice — nothing is recorded, nothing is sent anywhere, no cost.</p>
+    <button class="mic-btn" id="btn-voice-mic" type="button">🎙️ Tap to talk</button>
+    <p class="small" id="voice-status" style="text-align:center;">Voice mode is ready.</p>
+    <div id="voice-heard" class="voice-heard hidden"><div class="lbl">You said</div><span id="voice-heard-text"></span></div>
+    <div id="voice-answer" class="voice-answer hidden"></div>
+    <div id="voice-repeat" class="repeat-banner hidden">🔁 Repeating <b id="voice-repeat-ref"></b> — say <b>“stop”</b> or <b>“I’ve got it”</b>, or tap Stop.</div>
+    <button class="btn ghost hidden" id="btn-voice-stop" type="button">■ Stop repeating</button>
+    <p class="small muted" style="text-align:center;">Try saying: “Luke six thirty-one” · “Bring a verse in Psalms” · “Define repent” · “Explain it” · “Repeat it”</p>
+    <p class="small muted" style="text-align:center;">Plain truth: on iPhone, voice listening works in Safari. If the microphone is blocked, the app will say so — typed Ask still works. With the phone locked, the app cannot listen or speak; keep it open while you use voice mode.</p>
+  </div>
   <div class="card">
     <h2>Look up a verse or chapter</h2>
     <label for="lookup-text" style="margin-top:0;">Reference</label>
@@ -174,6 +214,29 @@
   <div class="card">
     <h2>Try one of these</h2>
     <div class="chips" id="ask-examples"></div>
+  </div>
+</section>
+
+<!-- ============ TALK ============ -->
+<section class="screen" id="screen-talk">
+  <div class="hero">
+    <div class="kicker">Talk</div>
+    <h1>Talk it through with Yah's Word</h1>
+    <p class="muted">A conversation, not just one question. Ask, and keep asking — the answer comes from Yah's Word, precept upon precept.</p>
+  </div>
+  <div class="card">
+    <div class="talk-list" id="talk-list">
+      <div class="talk-msg assistant">Shalom. I am here to talk it through with you, from Yah's Word. Ask what is on your heart — worry, weariness, a verse, a word you want defined — and we will walk through it together, precept upon precept.</div>
+    </div>
+    <div class="talk-input-row">
+      <input type="text" id="talk-input" placeholder="Talk to me plain…" autocomplete="off">
+      <button class="talk-mic" id="talk-mic" type="button" title="Talk by voice">🎙️</button>
+      <button class="btn gold" id="talk-send" type="button">Send</button>
+    </div>
+    <p class="small" id="talk-voice-status" style="text-align:center;"></p>
+    <p class="small muted" id="talk-status" style="text-align:center;"></p>
+    <button class="btn ghost" id="talk-clear" type="button">Clear talk</button>
+    <p class="small muted" style="text-align:center;">Talk keeps only this conversation, on this phone. Each question is sent to the live helper together with the verses found here, so it can answer from Yah's Word — nothing is recorded, no cost.</p>
   </div>
 </section>
 
@@ -220,6 +283,7 @@
   <button data-screen="home" class="on"><span class="ico">🏠</span>Home</button>
   <button data-screen="checkin"><span class="ico">💛</span>Check-In</button>
   <button data-screen="ask"><span class="ico">🙏</span>Ask</button>
+  <button data-screen="talk"><span class="ico">💬</span>Talk</button>
   <button data-screen="topics"><span class="ico">📖</span>Topics</button>
   <button data-screen="settings"><span class="ico">⏰</span>Settings</button>
 </nav>
@@ -588,6 +652,912 @@ window.TSY_DAILY = [{"ref": "Adam and Eve 1 60:18", "text": "But, Aḏam, when I
     renderLookup(ref);
   });
   document.getElementById("lookup-text").addEventListener("keydown", function(e){ if(e.key==="Enter") document.getElementById("btn-lookup-go").click(); });
+
+  /* ---------- voice mode (Ask screen) ----------
+     Device speech only: the phone listens with its own speech
+     recognition and answers with its own speech synthesis. Nothing is
+     recorded, nothing is sent anywhere, no cost, no keys. Verse text
+     always comes from the bundled Yah Scriptures text — never from
+     memory, never another translation. */
+  var VOICE = {
+    listening: false, speaking: false, recog: null, recogRunning: false,
+    lastVerse: null,           // {ref, text} — most recent verse given
+    repeat: {active: false, ref: null, text: null, timer: null}
+  };
+  var voiceStatusEl = document.getElementById("voice-status");
+  var voiceHeardEl = document.getElementById("voice-heard");
+  var voiceHeardTextEl = document.getElementById("voice-heard-text");
+  var voiceAnswerEl = document.getElementById("voice-answer");
+  var voiceRepeatEl = document.getElementById("voice-repeat");
+  var voiceStopBtn = document.getElementById("btn-voice-stop");
+  var voiceMicBtn = document.getElementById("btn-voice-mic");
+
+  function setVoiceStatus(t){ if(voiceStatusEl) voiceStatusEl.textContent = t; }
+  function showHeard(t){
+    if(!voiceHeardEl) return;
+    voiceHeardEl.classList.remove("hidden");
+    voiceHeardTextEl.textContent = "“" + t + "”";
+  }
+  function showVoiceAnswer(html){
+    if(!voiceAnswerEl) return;
+    voiceAnswerEl.classList.remove("hidden");
+    voiceAnswerEl.innerHTML = html;
+  }
+  function firstSentence(s){
+    var m = String(s||"").match(/^[^.!?]+[.!?]/);
+    return m ? m[0] : String(s||"");
+  }
+
+  /* Spoken form of Yah text: the bundle writes the Name in paleo-Hebrew
+     letters, which a speech voice cannot read. Speak the Sacred Names
+     instead — Yahuah for the four-letter Name, Yahusha for His Name —
+     and strip the remaining marks the voice would stumble on. The text
+     shown on screen is always the exact bundle text, untouched. */
+  var PALEO_YHWH = "𐤉𐤄𐤅𐤄";
+  var PALEO_YAHUSHA = "𐤉𐤄𐤅𐤔𐤏";
+  function forSpeech(s){
+    /* Walk code point by code point (astral letters are two UTF-16
+       units — a plain split("") would shred them). Drop combining
+       marks, leftover paleo-Hebrew / Hebrew letters, and invisible
+       marks; keep every ordinary letter. */
+    var out = String(s||"")
+      .split(PALEO_YHWH).join("Yahuah")
+      .split(PALEO_YAHUSHA).join("Yahusha")
+      .normalize("NFD");
+    var kept = [];
+    for(var i=0;i<out.length;){
+      var cp = out.codePointAt(i);
+      var w = cp > 0xFFFF ? 2 : 1;
+      var drop = (cp >= 0x0300 && cp <= 0x036F) ||   /* combining marks */
+        (cp >= 0x10900 && cp <= 0x1091F) ||           /* paleo-Hebrew */
+        (cp >= 0x0590 && cp <= 0x05FF) ||             /* Hebrew */
+        cp === 0x200E || cp === 0x00AD;               /* invisible marks */
+      if(!drop){
+        kept.push(out[i]);
+        if(w === 2) kept.push(out[i+1]);
+      }
+      i += w;
+    }
+    var joined = kept.join("");
+    joined = joined.split("“").join('"').split("”").join('"')
+      .split("‘").join("'").split("’").join("'").split("ﬁ").join("fi");
+    return joined.replace(/\s+/g, " ").trim();
+  }
+
+  /* ---------- device speech (answers) ---------- */
+  function speak(text, onend){
+    var clean = forSpeech(text);
+    if(!("speechSynthesis" in window) || !clean){
+      if(onend) setTimeout(onend, 0);
+      return;
+    }
+    try{
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(clean);
+      u.rate = 0.95;
+      VOICE.speaking = true;
+      var done = false;
+      var finish = function(){
+        if(done) return; done = true;
+        VOICE.speaking = false;
+        if(onend) onend();
+        if(VOICE.listening) restartRecog(350);
+      };
+      u.onend = finish;
+      u.onerror = finish;
+      window.speechSynthesis.speak(u);
+      /* Safety: if the voice never fires back (some browsers stall),
+         do not leave the app stuck thinking it is speaking. */
+      setTimeout(function(){
+        if(!done && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) finish();
+      }, 4000);
+    }catch(e){
+      VOICE.speaking = false;
+      if(onend) setTimeout(onend, 0);
+    }
+  }
+
+  /* ---------- spoken numbers & references ---------- */
+  var NUMW = {zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,
+    ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,
+    seventeen:17,eighteen:18,nineteen:19};
+  var TENSW = {twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+  function wordsToDigits(text){
+    var toks = String(text||"").split(/\s+/);
+    var out = [], i = 0;
+    function clean(t){ return (t||"").replace(/[^a-z]/g,""); }
+    while(i < toks.length){
+      var w = clean(toks[i]);
+      if(TENSW[w] !== undefined){
+        var v = TENSW[w]; i++;
+        var n = clean(toks[i] || "");
+        if(NUMW[n] !== undefined && NUMW[n] < 10){ v += NUMW[n]; i++; }
+        out.push(String(v));
+      } else if(NUMW[w] !== undefined){
+        var v2 = NUMW[w]; i++;
+        if(clean(toks[i] || "") === "hundred"){
+          v2 = v2 * 100; i++;
+          var t2 = clean(toks[i] || "");
+          if(TENSW[t2] !== undefined){
+            v2 += TENSW[t2]; i++;
+            var o2 = clean(toks[i] || "");
+            if(NUMW[o2] !== undefined && NUMW[o2] < 10){ v2 += NUMW[o2]; i++; }
+          } else if(NUMW[t2] !== undefined){ v2 += NUMW[t2]; i++; }
+        }
+        out.push(String(v2));
+      } else { out.push(toks[i]); i++; }
+    }
+    return out.join(" ");
+  }
+  function normalizeSpoken(raw){
+    var s = String(raw||"").toLowerCase()
+      .replace(/[’‘]/g,"'")
+      .replace(/[^a-z0-9':\s-]/g," ")
+      .replace(/\s+/g," ").trim();
+    s = s.replace(/\b(first|second|third|fourth)\s+(john|corinthians|samuel|kings|chronicles|peter|thessalonians|timothy|maccabees|esdras|ezra|baruch|enoch)\b/g,
+      function(m, o, b){ return ({first:"1",second:"2",third:"3",fourth:"4"})[o] + " " + b; });
+    s = wordsToDigits(s);
+    s = s.replace(/^(please\s+)?(bring|give|read|show|tell|share|quote)\s+(me\s+)?(a\s+)?(verse|scripture|word|passage)\s+(in|from|of|about)\s+/, "");
+    s = s.replace(/^(bring|give|read|show)\s+(me\s+)?(a\s+)?(verse|scripture)\s+/, "");
+    s = s.replace(/\bthe book of\b\s*/g, "");
+    s = s.replace(/\bchapter\b\s*/g, "").replace(/\bverse\b\s*/g, ":")
+         .replace(/:{2,}/g, ":").replace(/\s*:\s*/g, ":");
+    return s.replace(/\s+/g," ").trim();
+  }
+  function parseRefLoose(s){
+    var ref = parseReference(s);
+    if(ref) return ref;
+    var m = s.match(/^(.+?)\s+(\d+)\s+(\d+)$/);
+    if(m){
+      var r = parseReference(m[1] + " " + m[2] + ":" + m[3]);
+      if(r) return r;
+    }
+    return null;
+  }
+  function extractReference(text){
+    var s = normalizeSpoken(text);
+    var r = parseRefLoose(s);
+    if(r) return r;
+    var words = s.split(" ");
+    for(var i=1; i<words.length; i++){
+      var r2 = parseRefLoose(words.slice(i).join(" "));
+      if(r2) return r2;
+    }
+    var best = null;
+    BOOKS.forEach(function(b){
+      var n = b.name.toLowerCase();
+      if(s.indexOf(n) !== -1 && (!best || n.length > best.name.length)) best = b;
+    });
+    if(best) return {book: best, chapter: null, verse: null, bookOnly: true};
+    return null;
+  }
+  function fetchVerse(parsed){
+    return loadBook(parsed.book.slug).then(function(doc){
+      var chData = doc.chapters[String(parsed.chapter)];
+      if(!chData) throw new Error("no chapter");
+      var text = chData[String(parsed.verse)];
+      if(!text) throw new Error("no verse");
+      return {ref: parsed.book.name + " " + parsed.chapter + ":" + parsed.verse, text: text};
+    });
+  }
+  function fetchChapterFirstVerse(parsed){
+    return loadBook(parsed.book.slug).then(function(doc){
+      var chData = doc.chapters[String(parsed.chapter)];
+      if(!chData) throw new Error("no chapter");
+      var vns = Object.keys(chData).sort(function(a,b){ return a-b; });
+      var vn = vns[0];
+      return {ref: parsed.book.name + " " + parsed.chapter + ":" + vn, text: chData[vn]};
+    });
+  }
+  function pickVerseForBook(book){
+    var bankRefs = [];
+    BANK.topics.forEach(function(t){ t.verses.forEach(function(v){ bankRefs.push(v.ref); }); });
+    BANK.general_counsel.verses.forEach(function(v){ bankRefs.push(v.ref); });
+    var found = null;
+    for(var i=0;i<bankRefs.length;i++){
+      var m = bankRefs[i].match(/^(.+?)\s+(\d+):(\d+)$/);
+      if(m){
+        var b = bookByName(m[1]);
+        if(b && b.slug === book.slug){ found = bankRefs[i]; break; }
+      }
+    }
+    var parsed = found ? parseReference(found)
+      : {book: book, chapter: book.first_chapter || 1, verse: 1};
+    return fetchVerse(parsed);
+  }
+  function dailyVerse(){
+    var daily = window.TSY_DAILY || [];
+    if(!daily.length) return Promise.reject(new Error("no daily verses"));
+    var v = daily[dayOfYear() % daily.length];
+    var parsed = parseReference(v.ref);
+    if(!parsed) return Promise.reject(new Error("bad daily ref"));
+    return fetchVerse(parsed);
+  }
+
+  /* ---------- scriptural glossary ----------
+     Short definitions written from the teaching already in this app's
+     counsel bank — not invented, and never presented as a verse. Words
+     outside this list fall back to the free dictionary below. */
+  var GLOSSARY = {
+    "precept": {def: "A precept is a command, an instruction from Yahuah — His Word given line upon line. Precept upon precept is how the Scriptures explain themselves: one verse opening another until the understanding is plain.", note: "The counsel in this app answers precept upon precept — see the Doubt topic."},
+    "repent": {def: "To repent is to turn back — to turn from your own way and return to Yahuah. The way back is not complicated: turn back, call on His Name, open the Word, and pray.", note: "See the counsel for Feeling Far from Yah."},
+    "salvation": {def: "Salvation is deliverance by Yahuah. He is near to the broken-hearted, and He saves those whose spirit is crushed. Call on Him, trust Him, and He saves.", note: "See Psalm 34, verse 18, in the Heavy Heart topic."},
+    "elohiym": {def: "Elohiym is the title of the Almighty, the Creator — the One we pray to, who is concerned about us and will not let us be tried beyond what we are able.", note: "See the counsel for Anxiety and Worry, and for Temptation."},
+    "yahuah": {def: "Yahuah is the Name of the Almighty — the One whose Word this app speaks. Trust in Yahuah with all your heart, and lean not on your own understanding.", note: "See Proverbs 3, verses 5 and 6."},
+    "yahusha": {def: "Yahusha is the Son, Ha'Maschiach — the One who gives rest to all who labor and are burdened, and in whom Elohim forgave us.", note: "See the counsel for Weariness, and for Family Strain."},
+    "ha'maschiach": {def: "Ha'Maschiach means the Anointed One — Yahusha, the Anointed, in whom Elohim forgave us and for whose sake we forgive one another.", note: "See the counsel for Family Strain."},
+    "faith": {def: "Faith is belief that acts — trusting Yahuah and His Word. Without belief it is impossible to please Him, for he who comes to Elohim has to believe that He is, and that He is a rewarder of those who earnestly seek Him.", note: "See the counsel for Doubt."},
+    "commandment": {def: "A commandment is what Yahuah commands His people to guard and to do. His Word is the instruction for the walk — and keeping His commandments is how we stay near to Him.", note: "See the counsel for Feeling Far from Yah."},
+    "sin": {def: "Sin is going your own way instead of Yahuah's way. The way back is the same as always: turn back, call on His Name, and return to Him.", note: "See the counsel for Feeling Far from Yah."},
+    "shalom": {def: "Shalom is peace — the perfect peace Yahuah guards over the mind that is steadfast on Him.", note: "See Isaiah 26, verse 3."},
+    "peace": {def: "Peace is what guards the heart and mind that trusts Yahuah — His peace, not the world's. Worry is what happens when the mind tries to carry tomorrow by itself.", note: "See the counsel for Anxiety and Worry."},
+    "favor": {def: "Favor is the kindness of Elohim — we come boldly to the throne of favor for timely help.", note: "See the counsel for Temptation."},
+    "truth": {def: "Truth is Yahuah's Word — His Word is what sets free and makes whole.", note: "You shall know the truth, and the truth shall make you free."},
+    "ruach": {def: "Ruach is the word for spirit, breath, wind — the breath of Yahuah.", note: ""},
+    "righteousness": {def: "Righteousness is doing what is right before Yahuah — walking in His commandments. The wrath of man does not work the righteousness of Elohim; His righteousness is what we seek first.", note: "See the counsel for Anger, and for Money Pressure."}
+  };
+  var GLOSSARY_ALIASES = {repentance:"repent", belief:"faith", commandments:"commandment",
+    mashiach:"ha'maschiach", "maschiach":"ha'maschiach", grace:"favor", messiah:"ha'maschiach"};
+  function defineWord(word){
+    var key = String(word||"").toLowerCase().replace(/[^a-z' -]/g,"").trim().replace(/\s+/g," ");
+    if(!key) return Promise.resolve({word: word, definition: null, source: "none"});
+    if(GLOSSARY_ALIASES[key]) key = GLOSSARY_ALIASES[key];
+    if(GLOSSARY[key]){
+      return Promise.resolve({word: key, definition: GLOSSARY[key].def, note: GLOSSARY[key].note, source: "scripture"});
+    }
+    /* General words: free dictionary, no key. If it fails, is slow,
+       or has no entry, say so honestly — never invent a definition. */
+    var ctrl = ("AbortController" in window) ? new AbortController() : null;
+    var timer = null;
+    if(ctrl) timer = setTimeout(function(){ try{ ctrl.abort(); }catch(e){} }, 12000);
+    var fetchOpts = ctrl ? {signal: ctrl.signal} : {};
+    return fetch("https://dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(key), fetchOpts)
+      .then(function(r){ if(timer) clearTimeout(timer); if(!r.ok) throw new Error("not found"); return r.json(); })
+      .then(function(data){
+        var entry = data && data[0];
+        var meaning = entry && entry.meanings && entry.meanings[0];
+        var def = meaning && meaning.definitions && meaning.definitions[0];
+        if(!def || !def.definition) throw new Error("no definition");
+        return {word: key, definition: def.definition, example: def.example || null,
+          partOfSpeech: meaning.partOfSpeech || null, source: "dictionary"};
+      })
+      .catch(function(){
+        return {word: key, definition: null, source: "none"};
+      });
+  }
+
+  /* ---------- explain a verse, precept upon precept ----------
+     Uses only what this app already holds: the counsel topics, and the
+     bundled full text. If neither covers it, say so honestly. */
+  function explainVerse(ref, text){
+    return ensureFullText().then(function(){
+      var topic = matchTopic(text + " " + ref);
+      var related = searchFullText(text).filter(function(v){ return v.ref !== ref; }).slice(0, 3);
+      var spokenParts = [], html = "";
+      if(topic){
+        spokenParts.push("Here is what the counsel says. " + topic.counsel);
+        html += "<p>" + esc(topic.counsel) + "</p>";
+      }
+      if(related.length){
+        spokenParts.push("Precept upon precept: " + related[0].ref + ". " + related[0].text);
+        html += "<p class=\"small muted\">Precept upon precept — what else Scripture says:</p>";
+        related.forEach(function(v){
+          html += "<span class=\"verse\"><b>" + esc(v.ref) + "</b> — " + esc(v.text) +
+            "<br><a class=\"small\" href=\"" + esc(chapterLink(v.ref)) + "\" target=\"_blank\" rel=\"noopener\">Read the full chapter ↗</a></span>";
+        });
+      }
+      if(!topic && !related.length){
+        spokenParts.push("The counsel in this app does not cover that verse directly, so here it is again, plain: " + ref + ". " + text);
+        html += "<p>The counsel in this app does not cover this verse directly, so here it is again, plain — and the whole chapter is one tap away on the Counsel screen.</p>";
+      }
+      return {spoken: spokenParts.join(" "), html: html};
+    });
+  }
+
+  /* ---------- repeat a verse until it is in the heart ---------- */
+  function updateRepeatUI(){
+    if(!voiceRepeatEl || !voiceStopBtn) return;
+    if(VOICE.repeat.active){
+      voiceRepeatEl.classList.remove("hidden");
+      document.getElementById("voice-repeat-ref").textContent = VOICE.repeat.ref || "";
+      voiceStopBtn.classList.remove("hidden");
+    } else {
+      voiceRepeatEl.classList.add("hidden");
+      voiceStopBtn.classList.add("hidden");
+    }
+  }
+  function speakRepeatOnce(){
+    if(!VOICE.repeat.active) return;
+    var ref = VOICE.repeat.ref, text = VOICE.repeat.text;
+    speak(ref + ". " + text, function(){
+      if(!VOICE.repeat.active) return;
+      VOICE.repeat.timer = setTimeout(speakRepeatOnce, 1500);
+    });
+  }
+  function startRepeat(ref, text){
+    stopRepeatSilent();
+    VOICE.repeat.active = true;
+    VOICE.repeat.ref = ref;
+    VOICE.repeat.text = text;
+    updateRepeatUI();
+    setVoiceStatus("Repeating " + ref + " — say “stop” or “I’ve got it”, or tap Stop.");
+    speakRepeatOnce();
+  }
+  function stopRepeatSilent(){
+    VOICE.repeat.active = false;
+    if(VOICE.repeat.timer){ clearTimeout(VOICE.repeat.timer); VOICE.repeat.timer = null; }
+    try{ if("speechSynthesis" in window) window.speechSynthesis.cancel(); }catch(e){}
+    updateRepeatUI();
+  }
+  function stopRepeat(spoken){
+    var wasActive = VOICE.repeat.active;
+    stopRepeatSilent();
+    setVoiceStatus("Stopped repeating.");
+    if(spoken && wasActive) speak("Amen. May it stay in your heart.");
+  }
+  if(voiceStopBtn) voiceStopBtn.addEventListener("click", function(){ stopRepeat(true); });
+
+  /* ---------- present a verse (voice) ---------- */
+  function presentVerse(v, intro){
+    VOICE.lastVerse = v;
+    var html = "<b>" + esc(v.ref) + "</b> — " + esc(v.text);
+    if(intro) html = "<p class=\"small muted\">" + esc(intro) + "</p>" + html;
+    html += "<p class=\"small muted\">Say “explain it” to hear it opened precept upon precept, or “repeat it” to hear it again and again until you have it.</p>";
+    showVoiceAnswer(html);
+    setVoiceStatus("Speaking " + v.ref + ".");
+    speak((intro ? intro + " " : "") + v.ref + ". " + v.text);
+    return v;
+  }
+  function presentVerseError(refText){
+    showVoiceAnswer("<p>I could not find <b>" + esc(refText) + "</b> in the Scriptures stored in this app. Check the book and numbers and try again — or ask for a verse from a book, like “a verse in Psalms”.</p>");
+    setVoiceStatus("That reference was not found.");
+    speak("I could not find " + refText + " in the Scriptures stored in this app. Check the book and numbers and try again.");
+  }
+
+  /* ---------- general ask, by voice ----------
+     Same engine as typed Ask: counsel topic first, then the full text,
+     then the general counsel. Spoken answer is short; the full answer
+     is shown on the Counsel screen. */
+  function voiceAsk(q){
+    var topic = matchTopic(q);
+    if(topic){
+      setVoiceStatus("Answer shown on the Counsel screen.");
+      speak(topic.title + ". " + topic.verses[0].ref + ". " + topic.verses[0].text + " " + firstSentence(topic.counsel));
+      renderCounsel(topic, "You asked: “" + q + "”");
+      appendFullTextCard(q);
+      return Promise.resolve();
+    }
+    setVoiceStatus("Searching all of Scripture…");
+    return ensureFullText().then(function(){
+      var matches = searchFullText(q);
+      if(matches.length){
+        setVoiceStatus("Answer shown on the Counsel screen.");
+        speak("From all of Scripture. " + matches[0].ref + ". " + matches[0].text);
+        var body = document.getElementById("counsel-body");
+        document.getElementById("counsel-topic-label").textContent = "From All of Scripture";
+        body.innerHTML = fullTextCardHtml(matches, "From All of Scripture", "You asked: “" + q + "” — no counsel topic matched those words exactly, so here is what Yah's Word itself says.");
+        show("counsel");
+      } else {
+        var g = BANK.general_counsel;
+        setVoiceStatus("Answer shown on the Counsel screen.");
+        speak(g.verses[0].ref + ". " + g.verses[0].text + " " + firstSentence(g.counsel));
+        renderCounsel({title:g.title, verses:g.verses, counsel:g.counsel, image:BANK.topics[0].image, video:null},
+          "You asked: “" + q + "” — no topic matched those words exactly, so here is the counsel that holds everything: trust Yah first.");
+      }
+    }).catch(function(){
+      var g2 = BANK.general_counsel;
+      setVoiceStatus("Answer shown on the Counsel screen.");
+      speak(g2.verses[0].ref + ". " + g2.verses[0].text + " " + firstSentence(g2.counsel));
+      renderCounsel({title:g2.title, verses:g2.verses, counsel:g2.counsel, image:BANK.topics[0].image, video:null},
+        "You asked: “" + q + "” — no topic matched those words exactly, so here is the counsel that holds everything: trust Yah first.");
+    });
+  }
+
+  /* ---------- intent parsing: what did he mean? ---------- */
+  function handleHeard(raw){
+    var heard = String(raw||"").trim();
+    if(!heard) return Promise.resolve();
+    showHeard(heard);
+    setVoiceStatus("Thinking…");
+    var low = heard.toLowerCase().replace(/[’‘]/g,"'");
+
+    /* Stop: while a verse is looping, “stop” or “I've got it” ends it. */
+    if(/stop listening/.test(low)){
+      stopListening();
+      setVoiceStatus("Stopped listening. Tap the microphone to talk again.");
+      return Promise.resolve();
+    }
+    if(VOICE.repeat.active && /(^|\b)(stop|that'?s enough|that is enough|enough|i'?ve got it|i got it|i'?m done|amen)(\b|$)/.test(low)){
+      stopRepeat(true);
+      return Promise.resolve();
+    }
+    if(VOICE.repeat.active && /\bstop\b/.test(low)){
+      stopRepeat(true);
+      return Promise.resolve();
+    }
+    if(/^stop$/.test(low) && VOICE.listening){
+      stopListening();
+      setVoiceStatus("Stopped listening. Tap the microphone to talk again.");
+      return Promise.resolve();
+    }
+
+    /* Repeat it: loop the last verse — or a named one — until stopped. */
+    var repeatMatch = low.match(/\brepeat\b/) || /play it again|say it again|read it again|again$/.test(low);
+    if(repeatMatch){
+      var refR = extractReference(heard);
+      if(refR && refR.verse){
+        return fetchVerse(refR).then(function(v){ startRepeat(v.ref, v.text); })
+          .catch(function(){ presentVerseError(refR.book.name + " " + refR.chapter + ":" + refR.verse); });
+      }
+      if(VOICE.lastVerse){ startRepeat(VOICE.lastVerse.ref, VOICE.lastVerse.text); return Promise.resolve(); }
+      showVoiceAnswer("<p>There is no verse to repeat yet — ask for one first, like “Luke six thirty-one”.</p>");
+      setVoiceStatus("No verse to repeat yet.");
+      speak("There is no verse to repeat yet. Ask for one first, like Luke six thirty-one.");
+      return Promise.resolve();
+    }
+
+    /* Define a word. */
+    var defWord = null;
+    var dm = low.match(/^\s*define\s+(.+)$/) || low.match(/what does\s+(.+?)\s+mean\b/) ||
+             low.match(/meaning of\s+(.+)$/) || low.match(/what'?s\s+(.+?)\s+mean\b/) ||
+             low.match(/tell me what\s+(.+?)\s+means?\b/);
+    if(dm) defWord = dm[1].replace(/\b(please|for me|the word|does it)\b/g,"").replace(/[?.!]+$/,"").trim();
+    if(defWord){
+      return defineWord(defWord).then(function(d){
+        if(!d.definition){
+          showVoiceAnswer("<p>I could not find a definition for <b>" + esc(d.word) + "</b> — neither in the app's teaching nor in the dictionary. Try another word.</p>");
+          setVoiceStatus("No definition found.");
+          speak("I could not find a definition for " + d.word + ". Try another word.");
+          return;
+        }
+        var spoken = d.word + ": " + d.definition + (d.note ? " " + d.note : "") + (d.example ? " For example: " + d.example : "");
+        var html = "<b>" + esc(d.word) + "</b>" + (d.partOfSpeech ? " <span class=\"small muted\">(" + esc(d.partOfSpeech) + ")</span>" : "") +
+          " — " + esc(d.definition) +
+          (d.note ? "<br><span class=\"small muted\">" + esc(d.note) + "</span>" : "") +
+          (d.example ? "<br><span class=\"small muted\">Example: “" + esc(d.example) + "”</span>" : "") +
+          "<br><span class=\"small muted\">" + (d.source === "scripture" ? "From the teaching in this app." : "From the dictionary.") + "</span>";
+        showVoiceAnswer(html);
+        setVoiceStatus("Definition spoken.");
+        speak(spoken);
+      });
+    }
+
+    /* Explain it — precept upon precept, from what the app holds. */
+    var explainIt = /\bexplain\b/.test(low) || /what does (it|this|that|the verse) mean/.test(low) ||
+      /precept upon precept/.test(low) || /tell me more/.test(low) || /break (it|this|that) down/.test(low);
+    if(explainIt){
+      var refE = extractReference(heard);
+      var base = null;
+      if(refE && refE.verse){
+        base = fetchVerse(refE);
+      } else if(VOICE.lastVerse){
+        base = Promise.resolve(VOICE.lastVerse);
+      }
+      if(!base){
+        showVoiceAnswer("<p>There is no verse to explain yet — ask for one first, like “Luke six thirty-one”, then say “explain it”.</p>");
+        setVoiceStatus("No verse to explain yet.");
+        speak("There is no verse to explain yet. Ask for one first, like Luke six thirty-one, then say explain it.");
+        return Promise.resolve();
+      }
+      return base.then(function(v){
+        VOICE.lastVerse = v;
+        return explainVerse(v.ref, v.text).then(function(ex){
+          showVoiceAnswer("<b>" + esc(v.ref) + "</b> — " + esc(v.text) + ex.html);
+          setVoiceStatus("Explanation spoken.");
+          speak("Thus says Yah. " + v.ref + ". " + v.text + " " + ex.spoken);
+        });
+      }).catch(function(){ presentVerseError(heard); });
+    }
+
+    /* Verse request: a reference, a chapter, a book, or just “a verse”. */
+    var refV = extractReference(heard);
+    if(refV){
+      if(refV.verse){
+        return fetchVerse(refV).then(function(v){ presentVerse(v, null); })
+          .catch(function(){ presentVerseError(refV.book.name + " " + refV.chapter + ":" + refV.verse); });
+      }
+      if(refV.chapter){
+        return fetchChapterFirstVerse(refV).then(function(v){
+          VOICE.lastVerse = v;
+          var label = refV.book.name + " " + refV.chapter;
+          showVoiceAnswer("<b>" + esc(v.ref) + "</b> — " + esc(v.text) +
+            "<p class=\"small muted\">That is the first verse of " + esc(label) + ". The whole chapter is ready to read.</p>" +
+            "<button class=\"btn ghost\" id=\"voice-open-chapter\" type=\"button\">📖 Read the whole chapter</button>" +
+            "<p class=\"small muted\">Say “explain it” to hear it opened, or “repeat it” to hear it again and again.</p>");
+          var btn = document.getElementById("voice-open-chapter");
+          if(btn) btn.addEventListener("click", function(){ renderLookup(refV); });
+          setVoiceStatus("Speaking " + v.ref + ".");
+          speak("Here is " + label + ", verse " + v.ref.split(":")[1] + ". " + v.text);
+        }).catch(function(){ presentVerseError(refV.book.name + " " + refV.chapter); });
+      }
+      /* Book only: a fitting verse from that book. */
+      return pickVerseForBook(refV.book).then(function(v){
+        presentVerse(v, "Here is a verse from " + refV.book.name + ":");
+      }).catch(function(){ presentVerseError("a verse from " + refV.book.name); });
+    }
+    if(/\b(verse|scripture)\b/.test(low) && /\b(bring|give|read|show|tell|share|quote|a|another|one)\b/.test(low)){
+      return dailyVerse().then(function(v){ presentVerse(v, "Here is today's word:"); })
+        .catch(function(){
+          showVoiceAnswer("<p>I could not open a verse just now. Try again, or ask for a verse by book — like “a verse in Psalms”.</p>");
+          setVoiceStatus("Could not open a verse.");
+          speak("I could not open a verse just now. Try again.");
+        });
+    }
+
+    /* Anything else: ask it plain, through the app's own Ask engine. */
+    return voiceAsk(heard);
+  }
+
+  /* ---------- listening (device speech recognition) ---------- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var recogRestartTimer = null;
+  function recogSupported(){ return !!SR; }
+  function updateMicUI(){
+    if(!voiceMicBtn) return;
+    if(VOICE.listening){
+      voiceMicBtn.classList.add("listening");
+      voiceMicBtn.textContent = "🛑 Stop listening";
+    } else {
+      voiceMicBtn.classList.remove("listening");
+      voiceMicBtn.textContent = "🎙️ Tap to talk";
+    }
+  }
+  function restartRecog(delay){
+    if(!VOICE.listening || VOICE.recogRunning || !VOICE.recog) return;
+    if(recogRestartTimer) clearTimeout(recogRestartTimer);
+    recogRestartTimer = setTimeout(function(){
+      if(!VOICE.listening || VOICE.recogRunning) return;
+      try{
+        VOICE.recogRunning = true;
+        VOICE.recog.start();
+      }catch(e){
+        VOICE.recogRunning = false;
+        /* Some browsers only allow listening to start from a tap. */
+        setVoiceStatus("Listening paused — tap the microphone to listen again.");
+        VOICE.listening = false;
+        updateMicUI();
+      }
+    }, delay || 300);
+  }
+  function startListening(){
+    if(!recogSupported()){
+      setVoiceStatus("Voice listening is not supported in this browser — type your question instead. On iPhone, open this app in Safari.");
+      showVoiceAnswer("<p>Voice listening is not supported in this browser. Typed Ask still works — type your question above, and the app will answer from Yah's Word.</p>");
+      return;
+    }
+    if(VOICE.listening){ stopListening(); return; }
+    try{
+      var recog = new SR();
+      recog.lang = "en-US";
+      recog.continuous = true;
+      recog.interimResults = true;
+      recog.onresult = function(ev){
+        var interim = "", finalText = "";
+        for(var i=ev.resultIndex; i<ev.results.length; i++){
+          var r = ev.results[i];
+          if(r.isFinal) finalText += r[0].transcript;
+          else interim += r[0].transcript;
+        }
+        if(interim && !finalText){
+          showHeard(interim + " …");
+          setVoiceStatus("Listening…");
+        }
+        if(finalText){
+          handleHeard(finalText);
+        }
+      };
+      recog.onerror = function(ev){
+        var err = (ev && ev.error) || "";
+        if(err === "not-allowed" || err === "service-not-allowed"){
+          VOICE.listening = false;
+          updateMicUI();
+          setVoiceStatus("Microphone is blocked — allow it in Safari settings, then tap the microphone again. Typed Ask still works.");
+          showVoiceAnswer("<p>The microphone is blocked, so the app cannot hear you. Allow microphone access in Safari settings and try again — or type your question above.</p>");
+        } else if(err === "audio-capture"){
+          VOICE.listening = false;
+          updateMicUI();
+          setVoiceStatus("No microphone was found on this device. Typed Ask still works.");
+        }
+        /* "no-speech" and "aborted" are routine — the onend handler
+           restarts listening. */
+      };
+      recog.onend = function(){
+        VOICE.recogRunning = false;
+        if(VOICE.listening && !VOICE.speaking) restartRecog(250);
+      };
+      VOICE.recog = recog;
+      VOICE.listening = true;
+      VOICE.recogRunning = true;
+      recog.start();
+      updateMicUI();
+      setVoiceStatus("Listening… speak now. Tap again to stop.");
+    }catch(e){
+      VOICE.listening = false;
+      VOICE.recogRunning = false;
+      updateMicUI();
+      setVoiceStatus("Could not start listening — typed Ask still works.");
+    }
+  }
+  function stopListening(){
+    VOICE.listening = false;
+    if(recogRestartTimer){ clearTimeout(recogRestartTimer); recogRestartTimer = null; }
+    try{ if(VOICE.recog) VOICE.recog.stop(); }catch(e){}
+    VOICE.recogRunning = false;
+    updateMicUI();
+  }
+  if(voiceMicBtn){
+    if(!recogSupported()){
+      voiceMicBtn.disabled = false; /* still tappable: tap explains why */
+    }
+    voiceMicBtn.addEventListener("click", function(){
+      if(VOICE.listening) stopListening();
+      else startListening();
+    });
+  }
+  /* Leaving the Ask screen stops the microphone. */
+  navBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      if(b.getAttribute("data-screen") !== "ask" && VOICE.listening) stopListening();
+    });
+  });
+  /* Test hooks: headless verification calls these directly — no
+     microphone needed. */
+  window.TSY_VOICE = {
+    supported: recogSupported(),
+    hasSpeechSynthesis: ("speechSynthesis" in window),
+    normalizeSpoken: normalizeSpoken,
+    wordsToDigits: wordsToDigits,
+    extractReference: extractReference,
+    fetchVerse: fetchVerse,
+    pickVerseForBook: pickVerseForBook,
+    defineWord: defineWord,
+    explainVerse: explainVerse,
+    forSpeech: forSpeech,
+    handleHeard: handleHeard,
+    startRepeat: startRepeat,
+    stopRepeat: stopRepeat,
+    state: VOICE,
+    glossary: GLOSSARY
+  };
+
+  /* ---------- talk: conversational dialogue ----------
+     A conversation on top of the engines already in this app: the
+     counsel topics, the bundled full text, and the already-deployed,
+     already-verified live Ask helper. The helper only ever receives
+     the question and Yah verses found here — never anything else.
+     If it does not answer, the app answers locally and says so
+     plainly. Every verse shown comes from the bundled Yah text. */
+  var TALK_WORKER_URL = "https://scrypture-ask.ministerw-dw.workers.dev/";
+  var talkHistory = []; /* {role:"user"|"assistant", text} — last 6 turns (12 entries), memory only */
+  var TALK_STATE = {busy: false, lastLive: false, lastFallback: false};
+  var talkListEl = document.getElementById("talk-list");
+  var talkInputEl = document.getElementById("talk-input");
+  var talkStatusEl = document.getElementById("talk-status");
+  var talkVoiceStatusEl = document.getElementById("talk-voice-status");
+  var talkMicBtn = document.getElementById("talk-mic");
+  var TALK_INTRO = "Shalom. I am here to talk it through with you, from Yah's Word. Ask what is on your heart — worry, weariness, a verse, a word you want defined — and we will walk through it together, precept upon precept.";
+  function talkScroll(){ if(talkListEl) talkListEl.scrollTop = talkListEl.scrollHeight; }
+  function talkAddUser(text){
+    var d = document.createElement("div");
+    d.className = "talk-msg user"; d.textContent = text;
+    talkListEl.appendChild(d); talkScroll(); return d;
+  }
+  function talkAddAssistant(html){
+    var d = document.createElement("div");
+    d.className = "talk-msg assistant"; d.innerHTML = html;
+    talkListEl.appendChild(d); talkScroll(); return d;
+  }
+  function talkAddThinking(){
+    var d = document.createElement("div");
+    d.className = "talk-msg thinking"; d.textContent = "Thinking…";
+    talkListEl.appendChild(d); talkScroll(); return d;
+  }
+  function talkPushHistory(role, text){
+    talkHistory.push({role: role, text: text});
+    while(talkHistory.length > 12) talkHistory.shift();
+  }
+  function cleanVerseText(s){ return String(s || "").replace(/\s+/g, " ").trim(); }
+  function talkVersesHtml(verses){
+    var html = "";
+    verses.forEach(function(v){
+      html += '<span class="verse"><b>' + esc(v.ref) + '</b> — ' + esc(cleanVerseText(v.text)) +
+        '<br><a class="small" href="' + esc(chapterLink(v.ref)) + '" target="_blank" rel="noopener">Read the full chapter ↗</a></span>';
+    });
+    return html;
+  }
+  function talkRefsHtml(verses){
+    if(!verses || !verses.length) return "";
+    var parts = [];
+    verses.forEach(function(v){
+      parts.push('<a class="small" href="' + esc(chapterLink(v.reference)) + '" target="_blank" rel="noopener">' + esc(v.reference) + '</a>');
+    });
+    return '<div class="talk-refs"><span class="small muted">Verses behind this answer:</span><br>' + parts.join(" · ") + '</div>';
+  }
+  /* The current question takes priority and is never cut off. History
+     folds in only if it fits: at most one short line naming the last
+     question asked. The current question is capped at 400 chars so
+     the total stays under the helper's 500-char limit. */
+  function buildTalkQuestion(current){
+    var q = String(current || "").slice(0, 400);
+    var prev = null;
+    for(var i = talkHistory.length - 1; i >= 0; i--){
+      if(talkHistory[i].role === "user"){ prev = talkHistory[i].text; break; }
+    }
+    if(!prev) return q;
+    var head = "Earlier you asked '", tail = "' — ";
+    var room = 500 - q.length - head.length - tail.length;
+    if(room < 10) return q;
+    return head + prev.slice(0, room) + tail + q;
+  }
+  /* Local fallback: counsel topic first, then full-text matches, then
+     the general counsel. Always says plainly that the live helper did
+     not answer and this comes from inside the app. */
+  function talkLocalAnswer(text, topic, matches){
+    var note = '<p class="talk-note">Plain truth: the live helper did not answer just now, so this answer comes from inside the app — from the counsel and Scriptures already held here.</p>';
+    var html = "";
+    if(topic){
+      html += "<p>" + esc(topic.counsel) + "</p>";
+      html += talkVersesHtml(topic.verses.map(function(v){ return {ref: v.ref, text: v.text}; }));
+      return {html: note + html,
+        spoken: firstSentence(topic.counsel) + " " + topic.verses[0].ref + ". " + cleanVerseText(topic.verses[0].text),
+        verses: topic.verses};
+    }
+    if(matches && matches.length){
+      html += "<p>Here is what Yah's Word itself says to those words:</p>";
+      html += talkVersesHtml(matches);
+      return {html: note + html,
+        spoken: matches[0].ref + ". " + cleanVerseText(matches[0].text),
+        verses: matches};
+    }
+    var g = BANK.general_counsel;
+    html += "<p><b>" + esc(g.title) + "</b></p>";
+    html += "<p>The Scriptures held here do not speak directly to that yet — so here is the counsel that holds everything: trust Yah first.</p>";
+    html += "<p>" + esc(g.counsel) + "</p>";
+    html += talkVersesHtml(g.verses);
+    html += '<p class="talk-note">If it helps, try asking about worry, weariness, anger, or feeling far from Yah — those topics are held here in full.</p>';
+    return {html: note + html,
+      spoken: firstSentence(g.counsel) + " " + g.verses[0].ref + ". " + cleanVerseText(g.verses[0].text),
+      verses: g.verses};
+  }
+  function talkSpeakShort(answer, verses){
+    if(!("speechSynthesis" in window)) return;
+    var spoken = firstSentence(answer);
+    if(verses && verses.length){
+      var v0 = verses[0];
+      var ref = v0.reference || v0.ref;
+      spoken += " " + ref + ". " + cleanVerseText(v0.text);
+    }
+    try{ speak(spoken); }catch(e){}
+  }
+  function sendTalk(text){
+    var q = String(text == null ? (talkInputEl ? talkInputEl.value : "") : text).trim();
+    if(!q || TALK_STATE.busy) return Promise.resolve(null);
+    if(talkInputEl) talkInputEl.value = "";
+    /* Build the worker question before the current question joins the
+       history, so the "earlier you asked" line names the last one. */
+    var question = buildTalkQuestion(q);
+    talkAddUser(q);
+    talkPushHistory("user", q);
+    var thinking = talkAddThinking();
+    if(talkStatusEl) talkStatusEl.textContent = "Thinking…";
+    TALK_STATE.busy = true; TALK_STATE.lastLive = false; TALK_STATE.lastFallback = false;
+    return ensureFullText().then(function(){
+      var topic = matchTopic(q);
+      var matches = searchFullText(q);
+      var verses = [];
+      if(topic){
+        topic.verses.forEach(function(v){ verses.push({reference: v.ref, text: cleanVerseText(v.text)}); });
+      }
+      matches.forEach(function(v){
+        if(verses.length >= 8) return;
+        var already = false;
+        verses.forEach(function(p){ if(p.reference === v.ref) already = true; });
+        if(!already) verses.push({reference: v.ref, text: cleanVerseText(v.text)});
+      });
+      var ctrl = ("AbortController" in window) ? new AbortController() : null;
+      var timer = null;
+      if(ctrl) timer = setTimeout(function(){ try{ ctrl.abort(); }catch(e){} }, 20000);
+      var opts = {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question: question, verses: verses})};
+      if(ctrl) opts.signal = ctrl.signal;
+      return fetch(TALK_WORKER_URL, opts).then(function(r){
+        if(timer) clearTimeout(timer);
+        if(!r.ok) throw new Error("helper " + r.status);
+        return r.json();
+      }).then(function(data){
+        if(!data || data.grounded !== true || !data.answer) throw new Error("not grounded");
+        thinking.remove();
+        TALK_STATE.lastLive = true;
+        talkAddAssistant("<p>" + esc(data.answer) + "</p>" + talkRefsHtml(verses));
+        talkPushHistory("assistant", data.answer);
+        if(talkStatusEl) talkStatusEl.textContent = "";
+        TALK_STATE.busy = false;
+        talkSpeakShort(data.answer, verses);
+        return data.answer;
+      }).catch(function(){
+        if(timer) clearTimeout(timer);
+        thinking.remove();
+        TALK_STATE.lastFallback = true;
+        var local = talkLocalAnswer(q, topic, matches);
+        talkAddAssistant(local.html);
+        talkPushHistory("assistant", local.spoken);
+        if(talkStatusEl) talkStatusEl.textContent = "";
+        TALK_STATE.busy = false;
+        talkSpeakShort(local.spoken, local.verses);
+        return local.spoken;
+      });
+    }).catch(function(){
+      thinking.remove();
+      TALK_STATE.lastFallback = true;
+      var local2 = talkLocalAnswer(q, matchTopic(q), []);
+      talkAddAssistant(local2.html);
+      talkPushHistory("assistant", local2.spoken);
+      if(talkStatusEl) talkStatusEl.textContent = "";
+      TALK_STATE.busy = false;
+      talkSpeakShort(local2.spoken, local2.verses);
+      return local2.spoken;
+    });
+  }
+  function clearTalk(){
+    talkHistory.length = 0;
+    if(talkListEl) talkListEl.innerHTML = '<div class="talk-msg assistant">' + esc(TALK_INTRO) + '</div>';
+    if(talkStatusEl) talkStatusEl.textContent = "";
+    talkSetVoiceStatus("");
+  }
+  /* ---------- voice in Talk: fresh one-shot listen, then speak short ----------
+     A new one-shot recognition each tap — the Ask screen's continuous
+     listener is never reused or touched. */
+  var talkRecog = null;
+  function talkSetVoiceStatus(t){ if(talkVoiceStatusEl) talkVoiceStatusEl.textContent = t; }
+  function talkListen(){
+    if(!SR){
+      talkSetVoiceStatus("Voice listening is not supported in this browser — type your question instead. On iPhone, open this app in Safari.");
+      return;
+    }
+    try{
+      var recog = new SR();
+      recog.lang = "en-US";
+      recog.continuous = false;
+      recog.interimResults = false;
+      talkRecog = recog;
+      if(talkMicBtn){ talkMicBtn.classList.add("listening"); talkMicBtn.textContent = "🛑"; }
+      talkSetVoiceStatus("Listening… speak now.");
+      recog.onresult = function(ev){
+        var heard = "";
+        for(var i = 0; i < ev.results.length; i++){ heard += ev.results[i][0].transcript; }
+        heard = heard.trim();
+        if(heard){ talkSetVoiceStatus("You said: “" + heard + "”"); sendTalk(heard); }
+        else talkSetVoiceStatus("I did not catch that — try again, or type it.");
+      };
+      recog.onerror = function(ev){
+        var err = (ev && ev.error) || "";
+        if(talkMicBtn){ talkMicBtn.classList.remove("listening"); talkMicBtn.textContent = "🎙️"; }
+        if(err === "not-allowed" || err === "service-not-allowed"){
+          talkSetVoiceStatus("Microphone is blocked — allow it in Safari settings, then tap the microphone again. Typed Talk still works.");
+        } else if(err === "audio-capture"){
+          talkSetVoiceStatus("No microphone was found on this device. Typed Talk still works.");
+        } else if(err === "no-speech"){
+          talkSetVoiceStatus("I did not hear anything — try again, or type it.");
+        } else {
+          talkSetVoiceStatus("Could not listen just now — typed Talk still works.");
+        }
+      };
+      recog.onend = function(){
+        if(talkMicBtn){ talkMicBtn.classList.remove("listening"); talkMicBtn.textContent = "🎙️"; }
+        talkRecog = null;
+      };
+      recog.start();
+    }catch(e){
+      if(talkMicBtn){ talkMicBtn.classList.remove("listening"); talkMicBtn.textContent = "🎙️"; }
+      talkSetVoiceStatus("Could not start listening — typed Talk still works.");
+    }
+  }
+  if(document.getElementById("talk-send")) document.getElementById("talk-send").addEventListener("click", function(){ sendTalk(); });
+  if(talkInputEl) talkInputEl.addEventListener("keydown", function(e){ if(e.key === "Enter") sendTalk(); });
+  if(document.getElementById("talk-clear")) document.getElementById("talk-clear").addEventListener("click", clearTalk);
+  if(talkMicBtn) talkMicBtn.addEventListener("click", talkListen);
+  /* Test hooks: headless verification drives Talk without a microphone. */
+  window.TSY_TALK = {send: sendTalk, history: talkHistory, clear: clearTalk, state: TALK_STATE};
 
   /* ---------- topics ---------- */
   function renderTopics(){
