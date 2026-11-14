@@ -777,7 +777,31 @@ window.TSY_DAILY = [{"ref": "Adam and Eve 1 60:18", "text": "But, Aḏam, when I
     return joined.replace(/\s+/g, " ").trim();
   }
 
-  /* ---------- device speech (answers) ---------- */
+  /* ---------- device speech (answers) ----------
+     Dee's own voice: his iPhone Personal Voice (Settings → Accessibility →
+     Personal Voice) is built on-device from his recordings. When the phone
+     exposes it to Safari, use it for every spoken answer; otherwise fall
+     back to the phone's default voice. Voices load async, so warm the
+     list on voiceschanged. */
+  var PERSONAL_VOICE = null;
+  function pickPersonalVoice(){
+    try{
+      if(!("speechSynthesis" in window)) return null;
+      var vs = window.speechSynthesis.getVoices() || [];
+      for(var i=0;i<vs.length;i++){
+        var nm = String(vs[i].name || "") + " " + String(vs[i].voiceURI || "");
+        if(/personal/i.test(nm)) return vs[i];
+      }
+    }catch(e){}
+    return null;
+  }
+  function warmVoices(){ PERSONAL_VOICE = pickPersonalVoice(); }
+  try{
+    if("speechSynthesis" in window){
+      warmVoices();
+      window.speechSynthesis.onvoiceschanged = warmVoices;
+    }
+  }catch(e){}
   function speak(text, onend){
     var clean = forSpeech(text);
     if(!("speechSynthesis" in window) || !clean){
@@ -788,6 +812,8 @@ window.TSY_DAILY = [{"ref": "Adam and Eve 1 60:18", "text": "But, Aḏam, when I
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(clean);
       u.rate = 0.95;
+      var pv = PERSONAL_VOICE || pickPersonalVoice();
+      if(pv) u.voice = pv;
       VOICE.speaking = true;
       var done = false;
       var finish = function(){
@@ -1366,6 +1392,14 @@ window.TSY_DAILY = [{"ref": "Adam and Eve 1 60:18", "text": "But, Aḏam, when I
     defineWord: defineWord,
     explainVerse: explainVerse,
     forSpeech: forSpeech,
+    listVoices: function(){
+      try{
+        return (window.speechSynthesis.getVoices() || []).map(function(v){
+          return (v.name || "") + " | " + (v.lang || "") + " | " + (v.voiceURI || "");
+        });
+      }catch(e){ return []; }
+    },
+    personalVoice: function(){ return PERSONAL_VOICE ? (PERSONAL_VOICE.name || "") : null; },
     handleHeard: handleHeard,
     startRepeat: startRepeat,
     stopRepeat: stopRepeat,
