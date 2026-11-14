@@ -31,7 +31,7 @@ function voices(){
 function personal(vs){
   for(var i=0;i<vs.length;i++){
     var nm = String(vs[i].name||"") + " " + String(vs[i].voiceURI||"");
-    if(/personal/i.test(nm)) return vs[i];
+    if(/personal|scrypture/i.test(nm)) return vs[i];
   }
   return null;
 }

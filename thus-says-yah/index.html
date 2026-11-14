@@ -790,7 +790,7 @@ window.TSY_DAILY = [{"ref": "Adam and Eve 1 60:18", "text": "But, Aḏam, when I
       var vs = window.speechSynthesis.getVoices() || [];
       for(var i=0;i<vs.length;i++){
         var nm = String(vs[i].name || "") + " " + String(vs[i].voiceURI || "");
-        if(/personal/i.test(nm)) return vs[i];
+        if(/personal|scrypture/i.test(nm)) return vs[i];
       }
     }catch(e){}
     return null;
