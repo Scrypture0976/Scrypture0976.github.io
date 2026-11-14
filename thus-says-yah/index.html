@@ -3,23 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0d0d0f">
+<meta name="theme-color" content="#0a0a0c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230d0d0f'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='%23d4af37' font-family='Georgia,serif'%3EY%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Thus Says Yah">
 <title>Thus Says Yah — Daily Heart &amp; Mind Check-In</title>
 <style>
   :root{
-    --bg:#0d0d0f; --panel:#17171b; --panel2:#1f1f24; --line:#2c2c33;
-    --gold:#d4af37; --gold-dim:#9a7d24; --red:#c8102e; --red-dark:#7a0c1d;
-    --text:#f5efe0; --muted:#b8b0a0; --soft:#8d8577;
+    --bg:#0a0a0c; --panel:#151517; --panel2:#1f1f23; --line:#33272b;
+    --gold:#d4af37; --gold-dim:#8a6a24; --red:#e01b3d; --red-dark:#8f0f22;
+    --red-bright:#ff2e4d; --ember:#ff7a3c; --ember-gold:#ffb347;
+    --text:#f7f1e3; --muted:#c9c0b0; --soft:#a89e8d;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
-  body{padding-bottom:86px;}
+  body{padding-bottom:86px;
+    background:radial-gradient(900px 480px at 50% -8%, rgba(224,27,61,.28), rgba(224,27,61,0) 70%),
+      radial-gradient(700px 420px at 50% 112%, rgba(255,122,60,.12), rgba(255,122,60,0) 70%), var(--bg);
+    background-attachment:fixed;}
   a{color:var(--gold);}
-  h1,h2,h3{font-family:Georgia,"Times New Roman",serif; color:var(--gold); margin:0 0 8px;}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif; color:var(--gold); margin:0 0 8px;
+    text-shadow:0 0 16px rgba(255,60,50,.35);}
   h1{font-size:26px; letter-spacing:.5px;}
   h2{font-size:21px;}
   h3{font-size:17px;}
@@ -27,94 +35,136 @@
   .muted{color:var(--muted);} .small{font-size:13px; line-height:1.5;}
   .screen{display:none; max-width:640px; margin:0 auto; padding:20px 18px 8px;}
   .screen.active{display:block;}
-  .hero{background:linear-gradient(160deg,#1a0508,#17171b 55%,#241a05);
-    border:1px solid var(--line); border-radius:16px; padding:22px 18px; margin-bottom:16px;}
-  .hero .kicker{color:var(--gold); letter-spacing:3px; font-size:11px; text-transform:uppercase; margin-bottom:6px;}
-  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px;}
-  .card.gold-border{border-color:var(--gold-dim);}
-  .verse{display:block; background:var(--panel2); border-left:3px solid var(--gold);
-    padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:15px; line-height:1.6;}
-  .verse b{color:var(--gold);}
-  .btn{display:block; width:100%; text-align:center; background:var(--red); color:#fff;
+  .hero{background:linear-gradient(160deg,#2b060a,#141416 55%,#1c0a05);
+    border:1px solid #4a232a; border-radius:16px; padding:22px 18px; margin-bottom:16px;
+    box-shadow:0 0 36px rgba(255,46,77,.16), inset 0 0 48px rgba(255,46,77,.07);}
+  .hero .kicker{color:var(--ember-gold); letter-spacing:3px; font-size:11px; text-transform:uppercase; margin-bottom:6px;}
+  /* ---------- animated hero shield, HOME SCREEN ONLY (pure CSS, no JS, no new assets) ----------
+     All selectors are scoped under #screen-home so no other image or element
+     in the app (topic images, topic rows, icon) can ever inherit this animation. */
+  #screen-home .hero-img-wrap{position:relative; margin:0 0 14px; border-radius:12px;}
+  /* 1. Moving red glow behind/around the shield: two drifting radial glows,
+     blurred, animating only opacity + transform (cheap, compositor-friendly). */
+  #screen-home .hero-img-wrap::before{content:""; position:absolute; inset:-12px; z-index:0; border-radius:18px;
+    pointer-events:none;
+    background:
+      radial-gradient(60% 55% at 30% 42%, rgba(255,32,48,.55), rgba(200,16,46,.28) 45%, transparent 70%),
+      radial-gradient(55% 50% at 72% 58%, rgba(255,80,60,.45), transparent 68%);
+    filter:blur(14px);
+    animation:hero-glow-drift 9s ease-in-out infinite alternate;}
+  /* 2. Light washing out from the "Yahuah" lettering: a soft radial wash
+     centred where the lettering sits in the crop (object-position center 38%),
+     pulsing in sync with the img's own glow. */
+  #screen-home .hero-img-wrap::after{content:""; position:absolute; inset:0; z-index:2; border-radius:12px;
+    pointer-events:none; mix-blend-mode:screen;
+    background:radial-gradient(55% 42% at 50% 38%, rgba(255,90,75,.30), rgba(255,40,50,.08) 55%, transparent 78%);
+    animation:hero-letter-wash 5s ease-in-out infinite;}
+  #screen-home .hero-img{position:relative; z-index:1; width:100%; height:300px; object-fit:cover; object-position:center 38%;
+    border-radius:12px; display:block; margin:0; border:1px solid rgba(255,122,60,.55);
+    animation:hero-letter-glow 5s ease-in-out infinite;}
+  @keyframes hero-glow-drift{
+    0%{opacity:.55; transform:translate(-6px,2px) scale(1);}
+    50%{opacity:.9; transform:translate(5px,-3px) scale(1.04);}
+    100%{opacity:.65; transform:translate(-2px,4px) scale(1.02);}}
+  @keyframes hero-letter-glow{
+    0%,100%{filter:drop-shadow(0 0 6px rgba(255,60,70,.25)) brightness(1);}
+    50%{filter:drop-shadow(0 0 22px rgba(255,70,80,.55)) brightness(1.06);}}
+  @keyframes hero-letter-wash{
+    0%,100%{opacity:.35;}
+    50%{opacity:.9;}}
+  @media (prefers-reduced-motion: reduce){
+    #screen-home .hero-img-wrap::before,#screen-home .hero-img-wrap::after,#screen-home .hero-img{animation:none;}}
+  .card{background:linear-gradient(165deg,#1a1a1d,#121214); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 2px 18px rgba(0,0,0,.55);}
+  .card.gold-border{border-color:var(--gold-dim); box-shadow:0 0 22px rgba(255,46,77,.14), 0 2px 18px rgba(0,0,0,.55);}
+  .verse{display:block; background:var(--panel2); border-left:3px solid var(--ember);
+    padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:15px; line-height:1.6;
+    box-shadow:0 0 14px rgba(255,122,60,.10);}
+  .verse b{color:var(--ember-gold);}
+  .btn{display:block; width:100%; text-align:center; background:linear-gradient(180deg,#e01b3d,#a30d24); color:#fff;
     border:none; border-radius:12px; padding:15px 18px; font-size:17px; font-weight:700;
-    cursor:pointer; margin:10px 0;}
-  .btn.gold{background:var(--gold); color:#171207;}
-  .btn.ghost{background:transparent; border:1px solid var(--gold-dim); color:var(--gold);}
+    cursor:pointer; margin:10px 0; box-shadow:0 0 18px rgba(255,46,77,.40);}
+  .btn.gold{background:linear-gradient(180deg,#e8c15a,#c9a227); color:#171207; box-shadow:0 0 16px rgba(212,175,55,.28);}
+  .btn.ghost{background:transparent; border:1px solid rgba(255,122,60,.6); color:var(--ember-gold);}
   .btn:disabled{opacity:.5;}
   .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px;}
   .chip{border:1px solid var(--line); background:var(--panel2); color:var(--text);
     border-radius:999px; padding:10px 14px; font-size:15px; cursor:pointer;}
-  .chip.sel{background:var(--gold); color:#171207; border-color:var(--gold); font-weight:700;}
+  .chip.sel{background:linear-gradient(180deg,#e01b3d,#a30d24); color:#fff; border-color:var(--red-bright); font-weight:700; box-shadow:0 0 14px rgba(255,46,77,.40);}
   textarea,input[type=text],input[type=time]{width:100%; background:var(--panel2); color:var(--text);
-    border:1px solid var(--line); border-radius:10px; padding:12px; font-size:16px; font-family:inherit;}
+    border:1px solid var(--line); border-radius:10px; padding:12px; font-size:16px; font-family:inherit;
+    box-shadow:inset 0 1px 6px rgba(0,0,0,.45);}
   textarea{min-height:90px; resize:vertical;}
   label{display:block; font-size:14px; color:var(--muted); margin:14px 0 6px;}
-  .topic-img{width:100%; border-radius:12px; display:block; margin:12px 0 4px; border:1px solid var(--line);}
+  .topic-img{width:100%; border-radius:12px; display:block; margin:12px 0 4px; border:1px solid var(--line); box-shadow:0 0 20px rgba(255,46,77,.10);}
   video.topic-vid{width:100%; border-radius:12px; display:block; margin:12px 0 4px; border:1px solid var(--line); background:#000;}
   .vid-note{font-size:13px; color:var(--soft); text-align:center; margin:6px 0 2px;}
   .streak-row{display:flex; gap:10px; margin-bottom:16px;}
-  .stat{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
-    padding:12px; text-align:center;}
-  .stat .num{font-size:24px; font-weight:800; color:var(--gold); font-family:Georgia,serif;}
+  .stat{flex:1; background:linear-gradient(165deg,#1a1a1d,#121214); border:1px solid var(--line); border-radius:12px;
+    padding:12px; text-align:center; box-shadow:0 2px 14px rgba(0,0,0,.5);}
+  .stat .num{font-size:24px; font-weight:800; color:var(--ember-gold); font-family:Georgia,serif; text-shadow:0 0 14px rgba(255,122,60,.45);}
   .stat .lbl{font-size:12px; color:var(--muted); margin-top:2px;}
-  .topic-row{display:flex; align-items:center; gap:12px; background:var(--panel);
-    border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; cursor:pointer;}
+  .topic-row{display:flex; align-items:center; gap:12px; background:linear-gradient(165deg,#1a1a1d,#121214);
+    border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; cursor:pointer; box-shadow:0 2px 14px rgba(0,0,0,.5);}
   .topic-row img{width:64px; height:64px; object-fit:cover; border-radius:8px; flex-shrink:0;}
   .topic-row .t{font-weight:700; font-size:16px;}
   .topic-row .s{font-size:13px; color:var(--muted);}
-  .topic-row .arrow{margin-left:auto; color:var(--gold); font-size:20px;}
-  nav{position:fixed; left:0; right:0; bottom:0; background:#101013; border-top:1px solid var(--line);
-    display:flex; z-index:50; padding-bottom:env(safe-area-inset-bottom);}
+  .topic-row .arrow{margin-left:auto; color:var(--ember-gold); font-size:20px;}
+  nav{position:fixed; left:0; right:0; bottom:0; background:#0d0d10; border-top:1px solid #452028;
+    display:flex; z-index:50; padding-bottom:env(safe-area-inset-bottom);
+    box-shadow:0 -6px 26px rgba(255,46,77,.14);}
   nav button{flex:1; background:none; border:none; color:var(--muted); padding:12px 4px 10px;
     font-size:11px; cursor:pointer;}
   nav button .ico{display:block; font-size:20px; line-height:1.1;}
-  nav button.on{color:var(--gold); font-weight:700;}
+  nav button.on{color:#ff6b5e; font-weight:700; text-shadow:0 0 12px rgba(255,46,77,.55);}
   .pill{display:inline-block; background:var(--red-dark); color:#fff; border-radius:999px;
     padding:3px 10px; font-size:12px; letter-spacing:1px; text-transform:uppercase;}
   .counsel-head{text-align:center; padding:8px 0 4px;}
-  .counsel-head .thus{font-family:Georgia,serif; font-size:24px; color:var(--gold); letter-spacing:1px;}
+  .counsel-head .thus{font-family:Georgia,serif; font-size:24px; color:var(--ember-gold); letter-spacing:1px; text-shadow:0 0 18px rgba(255,60,50,.45);}
   .said{font-style:italic; color:var(--muted); margin:8px 0; font-size:14px;}
   .hist-row{font-size:14px; padding:10px 0; border-bottom:1px solid var(--line); line-height:1.5;}
   .hist-row:last-child{border-bottom:none;}
-  .hist-row .d{color:var(--gold); font-weight:700;}
+  .hist-row .d{color:var(--ember-gold); font-weight:700;}
   .toggle-row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 0;}
   .switch{position:relative; width:52px; height:30px; flex-shrink:0;}
   .switch input{opacity:0; width:0; height:0;}
   .slider{position:absolute; inset:0; background:#333; border-radius:999px; cursor:pointer; transition:.2s;}
   .slider:before{content:""; position:absolute; width:24px; height:24px; left:3px; top:3px;
     background:#fff; border-radius:50%; transition:.2s;}
-  .switch input:checked + .slider{background:var(--gold);}
+  .switch input:checked + .slider{background:linear-gradient(180deg,#e01b3d,#a30d24); box-shadow:0 0 12px rgba(255,46,77,.5);}
   .switch input:checked + .slider:before{transform:translateX(22px);}
-  .banner{background:#241a05; border:1px solid var(--gold-dim); color:var(--text);
-    border-radius:10px; padding:12px; margin-bottom:14px; font-size:14px; line-height:1.5;}
+  .banner{background:#2a0a08; border:1px solid rgba(255,90,60,.45); color:var(--text);
+    border-radius:10px; padding:12px; margin-bottom:14px; font-size:14px; line-height:1.5;
+    box-shadow:0 0 16px rgba(255,46,77,.10);}
   /* ---------- talk (conversational dialogue) ---------- */
   .talk-list{display:flex; flex-direction:column; gap:10px; max-height:460px; overflow-y:auto; padding:4px 2px; margin-bottom:12px;}
   .talk-msg{max-width:88%; padding:10px 12px; border-radius:12px; font-size:15px; line-height:1.6; word-wrap:break-word;}
-  .talk-msg.user{align-self:flex-end; background:var(--red-dark); color:#fff; border-bottom-right-radius:4px;}
-  .talk-msg.assistant{align-self:flex-start; background:var(--panel2); border:1px solid var(--line); border-left:3px solid var(--gold); border-bottom-left-radius:4px;}
+  .talk-msg.user{align-self:flex-end; background:linear-gradient(180deg,#a31328,#8f0f22); color:#fff; border-bottom-right-radius:4px;}
+  .talk-msg.assistant{align-self:flex-start; background:var(--panel2); border:1px solid var(--line); border-left:3px solid var(--ember); border-bottom-left-radius:4px;}
   .talk-msg.thinking{align-self:flex-start; background:var(--panel2); border:1px solid var(--line); color:var(--muted); font-style:italic;}
   .talk-msg .talk-refs{margin-top:8px; font-size:13px;}
   .talk-msg .talk-note{margin-top:8px; font-size:13px; color:var(--muted);}
   .talk-input-row{display:flex; gap:8px; align-items:center;}
   .talk-input-row input{flex:1;}
   .talk-input-row .btn{width:auto; margin:0; padding:12px 16px; flex-shrink:0;}
-  .talk-mic{flex-shrink:0; background:var(--gold); color:#171207; border:none; border-radius:10px; padding:12px 14px; font-size:18px; font-weight:700; cursor:pointer;}
+  .talk-mic{flex-shrink:0; background:linear-gradient(180deg,#e8c15a,#c9a227); color:#171207; border:none; border-radius:10px; padding:12px 14px; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 0 12px rgba(212,175,55,.30);}
   .talk-mic.listening{background:var(--red); color:#fff; animation:pulse 1.6s ease-in-out infinite;}
   /* ---------- voice mode (Ask screen) ---------- */
-  .mic-btn{display:block; width:100%; text-align:center; background:var(--gold); color:#171207;
+  .mic-btn{display:block; width:100%; text-align:center; background:linear-gradient(180deg,#e8c15a,#c9a227); color:#171207;
     border:none; border-radius:12px; padding:15px 18px; font-size:17px; font-weight:700;
-    cursor:pointer; margin:10px 0;}
+    cursor:pointer; margin:10px 0; box-shadow:0 0 16px rgba(212,175,55,.28);}
   .mic-btn.listening{background:var(--red); color:#fff; animation:pulse 1.6s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(200,16,46,.55);}50%{box-shadow:0 0 0 12px rgba(200,16,46,0);}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,46,77,.60);}50%{box-shadow:0 0 0 12px rgba(255,46,77,0);}}
   .mic-btn:disabled{opacity:.5; animation:none;}
   .voice-heard{background:var(--panel2); border:1px solid var(--line); border-radius:10px;
     padding:10px 12px; margin:10px 0; font-size:15px; line-height:1.5;}
   .voice-heard .lbl{font-size:12px; color:var(--soft); text-transform:uppercase; letter-spacing:1px;}
-  .voice-answer{background:var(--panel2); border-left:3px solid var(--gold);
-    padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:15px; line-height:1.6;}
-  .voice-answer b{color:var(--gold);}
-  .repeat-banner{background:#241a05; border:1px solid var(--gold-dim); border-radius:10px;
-    padding:12px; margin:10px 0; font-size:14px; line-height:1.5; text-align:center;}
+  .voice-answer{background:var(--panel2); border-left:3px solid var(--ember);
+    padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:15px; line-height:1.6;
+    box-shadow:0 0 14px rgba(255,122,60,.10);}
+  .voice-answer b{color:var(--ember-gold);}
+  .repeat-banner{background:#2a0a08; border:1px solid rgba(255,90,60,.45); border-radius:10px;
+    padding:12px; margin:10px 0; font-size:14px; line-height:1.5; text-align:center;
+    box-shadow:0 0 16px rgba(255,46,77,.10);}
   .hidden{display:none !important;}
 </style>
 </head>
@@ -123,6 +173,9 @@
 <!-- ============ HOME ============ -->
 <section class="screen active" id="screen-home">
   <div class="hero">
+    <div class="hero-img-wrap">
+      <img class="hero-img" src="images/yahuah-shield.jpg" alt="Shield of Yahuah — glowing Yahuah lettering on a dark shield against radiant red light">
+    </div>
     <div class="kicker">Thus Says Yah</div>
     <h1>Examine your heart.<br>Guard your mind.</h1>
     <p class="muted">A daily check-in before Yah — where is your heart, what is on your mind, and what does His Word say back.</p>
