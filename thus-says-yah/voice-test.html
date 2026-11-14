@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice Test — Thus Says Yah</title>
+<style>
+  body{background:#0a0a0c;color:#f5f0e8;font-family:-apple-system,system-ui,sans-serif;margin:0;padding:20px}
+  h1{font-size:20px;color:#ff2e4d}
+  button{display:block;width:100%;margin:12px 0;padding:16px;font-size:17px;border-radius:12px;border:1px solid #e01b3d;background:#1a0d10;color:#fff}
+  button:active{background:#e01b3d}
+  #list{font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word;background:#141416;border:1px solid #333;border-radius:12px;padding:12px;margin-top:16px}
+  .ok{color:#7dd87d}.no{color:#ff7a7a}
+  p{color:#cbb}
+</style>
+</head>
+<body>
+<h1>Voice Test</h1>
+<p>This page shows every voice your phone lets this browser use. Tap a button to hear it speak.</p>
+<button id="btn-personal">▶ Hear my Personal Voice</button>
+<button id="btn-default">▶ Hear the default voice</button>
+<p id="found"></p>
+<div id="list">Loading voices…</div>
+<script>
+var listEl = document.getElementById("list");
+var foundEl = document.getElementById("found");
+function voices(){
+  try { return window.speechSynthesis.getVoices() || []; }
+  catch(e){ return []; }
+}
+function personal(vs){
+  for(var i=0;i<vs.length;i++){
+    var nm = String(vs[i].name||"") + " " + String(vs[i].voiceURI||"");
+    if(/personal/i.test(nm)) return vs[i];
+  }
+  return null;
+}
+function render(){
+  var vs = voices();
+  if(!vs.length){ listEl.textContent = "No voices loaded yet — wait a few seconds, it refreshes on its own."; return; }
+  var lines = vs.map(function(v, i){ return (i+1) + ". " + (v.name||"?") + "  [" + (v.lang||"?") + "]"; });
+  listEl.textContent = vs.length + " voices:\n" + lines.join("\n");
+  var p = personal(vs);
+  foundEl.innerHTML = p
+    ? "<span class='ok'>✓ Personal Voice found: " + p.name + "</span>"
+    : "<span class='no'>✗ No voice with “personal” in its name was found.</span>";
+}
+function speak(text, voice){
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95;
+    if(voice) u.voice = voice;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+document.getElementById("btn-personal").addEventListener("click", function(){
+  var p = personal(voices());
+  if(p){ speak("Thus says Yah. This is your own voice speaking.", p); }
+  else { speak("No Personal Voice was found on this phone, so you are hearing the default voice.", null); }
+});
+document.getElementById("btn-default").addEventListener("click", function(){
+  speak("Thus says Yah. This is the default voice speaking.", null);
+});
+render();
+try{
+  window.speechSynthesis.onvoiceschanged = render;
+  setTimeout(render, 1000);
+  setTimeout(render, 3000);
+}catch(e){}
+</script>
+</body>
+</html>
